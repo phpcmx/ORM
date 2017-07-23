@@ -22,13 +22,6 @@ class DbBehavior
 {
     use SingleEngine;
 
-    // 返回模式 key为列名
-    const MODE_KEY = PDO::FETCH_ASSOC;
-    // 返回模式 key为数字
-    const MODE_NUM = PDO::FETCH_NUM;
-    // 返回模式 key包含列名及数字
-    const MODE_BOTH = PDO::FETCH_BOTH;
-
     /**
      * 连接数据库
      *
@@ -68,7 +61,7 @@ class DbBehavior
 
         // 执行
         if(!$sql->execute($valueList)){
-            throw new ExecuteWasFailed($sql->errorInfo(), $sql->errorCode());
+            throw new ExecuteWasFailed(json_encode($sql->errorInfo()));
         }
 
         // 设置返回格式
@@ -98,7 +91,7 @@ class DbBehavior
 
         // 执行
         if(!$sql->execute($valueList)){
-            throw new ExecuteWasFailed($sql->errorInfo(), $sql->errorCode());
+            throw new ExecuteWasFailed(json_encode($sql->errorInfo()));
         }
 
         $sql->closeCursor();
@@ -119,19 +112,18 @@ class DbBehavior
      */
     public function update(PDO $db, $sqlStr, $valueList)
     {
-        $re = 0;
         // 执行
         $sql = $db->prepare($sqlStr);
 
         // 执行
         if(!$sql->execute($valueList)){
-            throw new ExecuteWasFailed($sql->errorInfo(), $sql->errorCode());
+            throw new ExecuteWasFailed(json_encode($sql->errorInfo()));
         }
 
         $sql->closeCursor();
 
         // 返回刚刚插入的数据的id
-        return $re;
+        return $sql->rowCount();
     }
 
 
@@ -144,18 +136,17 @@ class DbBehavior
      */
     public function delete(PDO $db, $sqlStr, $valueList)
     {
-        $re = 0;
         // 执行
         $sql = $db->prepare($sqlStr);
 
         // 执行
         if(!$sql->execute($valueList)){
-            throw new ExecuteWasFailed($sql->errorInfo(), $sql->errorCode());
+            throw new ExecuteWasFailed(json_encode($sql->errorInfo()));
         }
 
         $sql->closeCursor();
 
-        return $re;
+        return $sql->rowCount();
     }
 
 
@@ -169,7 +160,7 @@ class DbBehavior
      */
     public function query(PDO $db, $sqlStr)
     {
-        $sql = null;
+//        $sql = null;
         $sql = $db->query($sqlStr);
 
         return $sql;

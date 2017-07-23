@@ -1,9 +1,9 @@
 <?php
 /**
- * ExecuteWasFailed.php
+ * LackOfOperation.php
  *
  * 作者: 不二进制·Number
- * 创建日期: 2017/7/20 下午6:52
+ * 创建日期: 2017/7/23 上午1:12
  * 修改记录:
  *
  * $Id$
@@ -13,11 +13,11 @@ namespace phpcmx\mysql\exception;
 
 
 /**
- * Class ExecuteWasFailed
- * sql执行失败
+ * Class LackOfOperation
+ * 缺少操作
  * @package phpcmx\mysql\exception
  */
-class ExecuteWasFailed extends \RuntimeException
+class LackOfOperation extends \LogicException
 {
 
 }
