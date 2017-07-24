@@ -115,16 +115,12 @@ final class DB
      * 返回sql执行对象
      *
      * @param $dbName
-     * @param $tableName
      *
      * @return Sql
      */
-    static function sql($dbName, $tableName):Sql{
+    static function sql($dbName):Sql{
         $operation = new Sql($dbName);
-        if(!is_null($tableName))
-            return $operation->table($tableName);
-        else
-            return $operation;
+        return $operation;
     }
 
 

@@ -31,10 +31,19 @@ class Sql extends BaseDb
     {
         $this->_sqlStr = $this->_sql;
 
-        return DbBehavior::getInstance()->query(
+        $pdoStatement = DbBehavior::getInstance()->query(
             DBConfig::getInstance()->getDbCache($this->_dbName),
             $this->_sqlStr
         );
+
+        // 判断是哪种操作
+        $index = strpos($this->_sqlStr, ' ' );
+        if($index === false){
+            $index = strlen($this->_sqlStr);
+        }
+
+
+
     }
 
     /**

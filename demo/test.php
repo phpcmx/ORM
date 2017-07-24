@@ -15,10 +15,12 @@ spl_autoload_register(function($className){
 });
 
 
-DBConfig::getInstance()->addDbConfig('localhost', 'test', 'test', 'test');
+DBConfig::getInstance()->addDbConfig('139.129.32.89', 'test', 'test', 'test');
 
 
 if(0) {
+    $transaction = DB::transaction('test');
+    $transaction->beginTransaction();
     DB::insert('test')
         ->table('test_table')
         ->one([
@@ -26,9 +28,25 @@ if(0) {
             'createTime' => 'now()',
         ])
         ->execute();
+
+    $transaction->commit();
+
+    $transaction->rollBack();
 }
 if(0){
     $dataList = DB::select('test', 'test_table')
+        ->field('id', 'name')
+//        ->field(['id', 'name']) // 数组或者多参数均可
+        ->where([
+            'id' => 3,
+            'createTime' => ['>', date('Y-m-d H:i:s', time())]
+        ])
+        ->group("name")
+        ->order('id desc')
+//        ->order(['id' => 'desc']) // 也是数组字符串双类型参数
+        ->limit(10)
+//        ->limit(0, 10)
+//        ->limit("0, 10")
         ->execute();
 
     var_export($dataList);
@@ -40,7 +58,7 @@ if(0){
         ])
         ->execute();
 }
-if(1){
+if(0){
     echo DB::update('test', 'test_table')
         ->set([
             'name' => '123',
@@ -51,6 +69,13 @@ if(1){
             'id' => 1
         ])
         ->execute();
+}
+if(1){
+    /** @var PDOStatement $sql */
+    $sql = DB::sql('test')
+        ->query('update test_table set name=\'aaa\' where 1')
+        ->execute();
+
 }
 
 
