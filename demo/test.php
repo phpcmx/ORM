@@ -73,9 +73,10 @@ if(0){
 if(1){
     /** @var PDOStatement $sql */
     $sql = DB::sql('test')
-        ->query('update test_table set name=\'aaa\' where 1')
+        ->query('select * from test_table')
         ->execute();
 
+    var_export($sql);
 }
 
 

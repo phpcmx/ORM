@@ -25,25 +25,40 @@ class Sql extends BaseDb
     /**
      * 运行sql
      *
-     * @return \PDOStatement
+     * @return mixed
      */
     protected function sqlExecute()
     {
         $this->_sqlStr = $this->_sql;
 
+        $dbLink = DBConfig::getInstance()->getDbCache($this->_dbName);
+
         $pdoStatement = DbBehavior::getInstance()->query(
-            DBConfig::getInstance()->getDbCache($this->_dbName),
+            $dbLink,
             $this->_sqlStr
         );
 
         // 判断是哪种操作
-        $index = strpos($this->_sqlStr, ' ' );
+        $index = strpos(trim($this->_sqlStr), ' ' );
         if($index === false){
             $index = strlen($this->_sqlStr);
         }
+        switch(strtoupper(substr(trim($this->_sqlStr), 0, $index))){
+            case 'SELECT':
+                $return = $pdoStatement->fetchAll();
+                break;
+            case 'INSERT':
+                $return = $dbLink->lastInsertId();
+                break;
+            case 'UPDATE':
+            case 'DELETE':
+                $return  = $pdoStatement->rowCount();
+                break;
+            default:
+                $return = false;
+        }
 
-
-
+        return $return;
     }
 
     /**
