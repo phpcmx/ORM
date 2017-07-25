@@ -7,6 +7,8 @@ ini_set('display_errors', 'On');
 use phpcmx\mysql\DB;
 use phpcmx\mysql\DBConfig;
 
+
+// 自动加载，不需要自己声明，composer已经集成
 spl_autoload_register(function($className){
     $baseDir = __DIR__."/../src/";
     $classPath = $baseDir.strtr($className, ["\\"=>"/","phpcmx\\mysql\\"=>'']).".php";
@@ -15,9 +17,14 @@ spl_autoload_register(function($className){
 });
 
 
+
+
+
+// 配置数据库
 DBConfig::getInstance()->addDbConfig('139.129.32.89', 'test', 'test', 'test');
 
 
+// insert + 事务
 if(0) {
     $transaction = DB::transaction('test');
     $transaction->beginTransaction();
@@ -33,6 +40,8 @@ if(0) {
 
     $transaction->rollBack();
 }
+
+// 查询
 if(0){
     $dataList = DB::select('test', 'test_table')
         ->field('id', 'name')
@@ -51,6 +60,8 @@ if(0){
 
     var_export($dataList);
 }
+
+// 删除
 if(0){
     echo DB::delete('test', 'test_table')
         ->where([
@@ -58,6 +69,8 @@ if(0){
         ])
         ->execute();
 }
+
+// 更新
 if(0){
     echo DB::update('test', 'test_table')
         ->set([
@@ -70,7 +83,9 @@ if(0){
         ])
         ->execute();
 }
-if(1){
+
+// 执行sql语句
+if(0){
     /** @var PDOStatement $sql */
     $sql = DB::sql('test')
         ->query('select * from test_table')
