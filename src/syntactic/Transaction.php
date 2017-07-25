@@ -5,10 +5,10 @@
  * Time: 2017年07月24日03:14:22
  */
 
-namespace phpcmx\mysql\syntactic;
+namespace phpcmx\ORM\syntactic;
 
 use PDO;
-use phpcmx\mysql\DBConfig;
+use phpcmx\ORM\DBConfig;
 
 class Transaction extends BaseDb
 {

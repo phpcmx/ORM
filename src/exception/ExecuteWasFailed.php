@@ -9,13 +9,13 @@
  * $Id$
  */
 
-namespace phpcmx\mysql\exception;
+namespace phpcmx\ORM\exception;
 
 
 /**
  * Class ExecuteWasFailed
  * sql执行失败
- * @package phpcmx\mysql\exception
+ * @package phpcmx\ORM\exception
  */
 class ExecuteWasFailed extends \RuntimeException
 {

@@ -9,13 +9,13 @@
  * $Id$
  */
 
-namespace phpcmx\mysql\exception;
+namespace phpcmx\ORM\exception;
 
 
 /**
  * Class LackOfOperation
  * 缺少操作
- * @package phpcmx\mysql\exception
+ * @package phpcmx\ORM\exception
  */
 class LackOfOperation extends \LogicException
 {

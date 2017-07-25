@@ -5,7 +5,7 @@
  * Date: 2017年07月21日18:54:43
  */
 
-namespace phpcmx\mysql\syntactic;
+namespace phpcmx\ORM\syntactic;
 
 
 /**

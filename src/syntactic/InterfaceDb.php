@@ -9,12 +9,12 @@
  * $Id$
  */
 
-namespace phpcmx\mysql\syntactic;
+namespace phpcmx\ORM\syntactic;
 
 /**
  * Interface InterfaceDb
  * 数据库操作类接口
- * @package phpcmx\mysql\syntactic
+ * @package phpcmx\ORM\syntactic
  */
 interface InterfaceDb
 {

@@ -6,14 +6,14 @@
  * Time: 12:48 AM
  */
 
-namespace phpcmx\mysql\inc\traits;
+namespace phpcmx\ORM\inc\traits;
 
 
 /**
  * Trait SingleEngine
  * 简单单例的实现  PS:请勿使用此单例进行继承操作。这里的单例类，不应该被继承
  *
- * @package phpcmx\mysql\inc\traits
+ * @package phpcmx\ORM\inc\traits
  */
 trait SingleEngine
 {

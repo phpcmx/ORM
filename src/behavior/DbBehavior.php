@@ -6,11 +6,11 @@
  * @author 不二进制·Number
  */
 
-namespace phpcmx\mysql\behavior;
+namespace phpcmx\ORM\behavior;
 
 use PDO;
-use phpcmx\mysql\exception\ExecuteWasFailed;
-use phpcmx\mysql\inc\traits\SingleEngine;
+use phpcmx\ORM\exception\ExecuteWasFailed;
+use phpcmx\ORM\inc\traits\SingleEngine;
 
 /**
  * Class DbBehavior

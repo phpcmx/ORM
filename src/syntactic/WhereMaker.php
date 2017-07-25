@@ -5,16 +5,16 @@
  * time: 2017年07月22日23:51:26
  */
 
-namespace phpcmx\mysql\syntactic;
+namespace phpcmx\ORM\syntactic;
 
 
-use phpcmx\mysql\DBConfig;
-use phpcmx\mysql\inc\traits\SingleEngine;
+use phpcmx\ORM\DBConfig;
+use phpcmx\ORM\inc\traits\SingleEngine;
 
 /**
  * Class MakeWhere
  * 条件生成类
- * @package phpcmx\mysql\syntactic
+ * @package phpcmx\ORM\syntactic
  */
 class WhereMaker
 {

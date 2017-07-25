@@ -5,13 +5,13 @@
  * Time: 2017年07月23日01:37:19
  */
 
-namespace phpcmx\mysql\syntactic;
+namespace phpcmx\ORM\syntactic;
 
 
-use phpcmx\mysql\behavior\DbBehavior;
-use phpcmx\mysql\DB;
-use phpcmx\mysql\DBConfig;
-use phpcmx\mysql\exception\LackOfOperation;
+use phpcmx\ORM\behavior\DbBehavior;
+use phpcmx\ORM\DB;
+use phpcmx\ORM\DBConfig;
+use phpcmx\ORM\exception\LackOfOperation;
 
 class SelectDb extends BaseDb
 {

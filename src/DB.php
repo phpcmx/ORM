@@ -6,15 +6,15 @@
  * 时间： 2017年07月21日18:39:32
  */
 
-namespace phpcmx\mysql;
+namespace phpcmx\ORM;
 use PDO;
-use phpcmx\mysql\syntactic\DeleteDb;
-use phpcmx\mysql\syntactic\InsertDb;
-use phpcmx\mysql\syntactic\SelectDb;
-use phpcmx\mysql\syntactic\Sql;
-use phpcmx\mysql\syntactic\Transaction;
-use phpcmx\mysql\syntactic\UpdateDb;
-use phpcmx\mysql\syntactic\WhereMaker;
+use phpcmx\ORM\syntactic\DeleteDb;
+use phpcmx\ORM\syntactic\InsertDb;
+use phpcmx\ORM\syntactic\SelectDb;
+use phpcmx\ORM\syntactic\Sql;
+use phpcmx\ORM\syntactic\Transaction;
+use phpcmx\ORM\syntactic\UpdateDb;
+use phpcmx\ORM\syntactic\WhereMaker;
 
 /**
  * 数据库操作 工厂模式 调度类

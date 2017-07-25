@@ -9,16 +9,16 @@
  * $Id$
  */
 
-namespace phpcmx\mysql;
+namespace phpcmx\ORM;
 
 
-use phpcmx\mysql\behavior\DbBehavior;
-use phpcmx\mysql\inc\traits\SingleEngine;
+use phpcmx\ORM\behavior\DbBehavior;
+use phpcmx\ORM\inc\traits\SingleEngine;
 
 /**
  * Class DBConfig
  * 配置类，所有关于数据库的【可变】数据，均在此类保存
- * @package phpcmx\mysql
+ * @package phpcmx\ORM
  */
 final class DBConfig
 {

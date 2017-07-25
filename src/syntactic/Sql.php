@@ -5,12 +5,12 @@
  * Time: 2017年07月24日03:10:25
  */
 
-namespace phpcmx\mysql\syntactic;
+namespace phpcmx\ORM\syntactic;
 
 
-use phpcmx\mysql\behavior\DbBehavior;
-use phpcmx\mysql\DBConfig;
-use phpcmx\mysql\exception\LackOfOperation;
+use phpcmx\ORM\behavior\DbBehavior;
+use phpcmx\ORM\DBConfig;
+use phpcmx\ORM\exception\LackOfOperation;
 
 class Sql extends BaseDb
 {

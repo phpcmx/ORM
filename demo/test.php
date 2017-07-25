@@ -4,14 +4,14 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
 
-use phpcmx\mysql\DB;
-use phpcmx\mysql\DBConfig;
+use phpcmx\ORM\DB;
+use phpcmx\ORM\DBConfig;
 
 
 // 自动加载，不需要自己声明，composer已经集成
 spl_autoload_register(function($className){
     $baseDir = __DIR__."/../src/";
-    $classPath = $baseDir.strtr($className, ["\\"=>"/","phpcmx\\mysql\\"=>'']).".php";
+    $classPath = $baseDir.strtr($className, ["\\"=>"/","phpcmx\\ORM\\"=>'']).".php";
 
     include_once $classPath;
 });
