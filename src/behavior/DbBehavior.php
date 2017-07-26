@@ -10,7 +10,7 @@ namespace phpcmx\ORM\behavior;
 
 use PDO;
 use phpcmx\ORM\exception\ExecuteWasFailed;
-use phpcmx\ORM\inc\traits\SingleEngine;
+use phpcmx\ORM\inc\traits\FinalSingleEngine;
 
 /**
  * Class DbBehavior
@@ -20,7 +20,7 @@ use phpcmx\ORM\inc\traits\SingleEngine;
  */
 class DbBehavior
 {
-    use SingleEngine;
+    use FinalSingleEngine;
 
     /**
      * 连接数据库

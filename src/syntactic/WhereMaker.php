@@ -9,7 +9,7 @@ namespace phpcmx\ORM\syntactic;
 
 
 use phpcmx\ORM\DBConfig;
-use phpcmx\ORM\inc\traits\SingleEngine;
+use phpcmx\ORM\inc\traits\FinalSingleEngine;
 
 /**
  * Class MakeWhere
@@ -18,7 +18,7 @@ use phpcmx\ORM\inc\traits\SingleEngine;
  */
 class WhereMaker
 {
-    use SingleEngine;
+    use FinalSingleEngine;
 
 
     /**

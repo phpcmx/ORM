@@ -56,6 +56,6 @@ class Transaction extends BaseDb
      */
     protected function checkRequire()
     {
-        // TODO: Implement checkRequire() method.
+        // : Implement checkRequire() method.
     }
 }

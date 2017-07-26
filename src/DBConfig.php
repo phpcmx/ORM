@@ -13,7 +13,7 @@ namespace phpcmx\ORM;
 
 
 use phpcmx\ORM\behavior\DbBehavior;
-use phpcmx\ORM\inc\traits\SingleEngine;
+use phpcmx\ORM\inc\traits\FinalSingleEngine;
 
 /**
  * Class DBConfig
@@ -22,7 +22,7 @@ use phpcmx\ORM\inc\traits\SingleEngine;
  */
 final class DBConfig
 {
-    use SingleEngine;
+    use FinalSingleEngine;
 
     const CHARSET_UTF8 = 'utf8';
     const CHARSET_GBK = 'gbk';
