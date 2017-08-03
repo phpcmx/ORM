@@ -68,12 +68,29 @@ class SelectDb extends BaseDb
 
 
     /**
+     * 添加条件
+     *
+     * @param $where
+     * @return $this
+     */
+    public function andWhere($where){
+        if(is_string($where)){
+            $this->_where .= " and ({$where})";
+        }elseif(is_array($where)){
+            $this->_where .= " and (".DB::whereMaker()->and($where).")";
+        }
+
+        return $this;
+    }
+
+
+    /**
      * 设置group分组
      *
      * @param string $group
      * @return $this
      */
-    public function group($group){
+    public function groupBy($group){
         $this->_group = $group;
 
         return $this;
@@ -86,7 +103,7 @@ class SelectDb extends BaseDb
      * @param string | array $order
      * @return $this
      */
-    public function order($order)
+    public function orderBy($order)
     {
         // 如果是字符串就直接赋值
         if(is_string($order)){
@@ -194,7 +211,7 @@ class SelectDb extends BaseDb
      * @param null $mode
      * @return $this
      */
-    public function setFetchMode($mode = null){
+    public function returnAs($mode = null){
         if($mode) $this->_mode = $mode;
 
         return $this;
