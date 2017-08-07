@@ -46,13 +46,13 @@ final class DB
     /**
      * 返回插入对象
      *
-     * @param string $dbName
+     * @param string $dbAliasName
      * @param string $tableName
      *
      * @return InsertDb
      */
-    static function insert($dbName, $tableName = null):InsertDb{
-        $operation = new InsertDb($dbName);
+    static function insert($dbAliasName, $tableName = null):InsertDb{
+        $operation = new InsertDb($dbAliasName);
         if(!is_null($tableName))
             return $operation->table($tableName);
         else
@@ -63,13 +63,13 @@ final class DB
     /**
      * 返回删除对象
      *
-     * @param string $dbName
+     * @param string $dbAliasName
      * @param string $tableName
      *
      * @return DeleteDb
      */
-    static function delete($dbName, $tableName = null):DeleteDb{
-        $operation = new DeleteDb($dbName);
+    static function delete($dbAliasName, $tableName = null):DeleteDb{
+        $operation = new DeleteDb($dbAliasName);
         if(!is_null($tableName))
             return $operation->table($tableName);
         else
@@ -80,13 +80,13 @@ final class DB
     /**
      * 返回更新对象
      *
-     * @param $dbName
+     * @param $dbAliasName
      * @param $tableName
      *
      * @return UpdateDb
      */
-    static function update($dbName, $tableName):UpdateDb{
-        $operation = new UpdateDb($dbName);
+    static function update($dbAliasName, $tableName):UpdateDb{
+        $operation = new UpdateDb($dbAliasName);
         if(!is_null($tableName))
             return $operation->table($tableName);
         else
@@ -97,13 +97,13 @@ final class DB
     /**
      * 返回查询对象
      *
-     * @param string $dbName
+     * @param string $dbAliasName
      * @param string $tableName
      *
      * @return SelectDb
      */
-    static function select($dbName, $tableName = null):SelectDb{
-        $operation = new SelectDb($dbName);
+    static function select($dbAliasName, $tableName = null):SelectDb{
+        $operation = new SelectDb($dbAliasName);
         if(!is_null($tableName))
             return $operation->table($tableName);
         else
@@ -114,12 +114,12 @@ final class DB
     /**
      * 返回sql执行对象
      *
-     * @param $dbName
+     * @param $dbAliasName
      *
      * @return Sql
      */
-    static function sql($dbName):Sql{
-        $operation = new Sql($dbName);
+    static function sql($dbAliasName):Sql{
+        $operation = new Sql($dbAliasName);
         return $operation;
     }
 
@@ -127,10 +127,11 @@ final class DB
     /**
      * 返回事务
      *
-     * @param $dbName
+     * @param $dbAliasName
+     *
      * @return Transaction
      */
-    static function transaction($dbName):Transaction{
-        return new Transaction($dbName);
+    static function transaction($dbAliasName):Transaction{
+        return new Transaction($dbAliasName);
     }
 }

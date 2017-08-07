@@ -31,7 +31,7 @@ class Sql extends BaseDb
     {
         $this->_sqlStr = $this->_sql;
 
-        $dbLink = DBConfig::getInstance()->getDbCache($this->_dbName);
+        $dbLink = DBConfig::getInstance()->getDbCache($this->dbAliasName);
 
         $pdoStatement = DbBehavior::getInstance()->query(
             $dbLink,

@@ -45,17 +45,18 @@ final class DBConfig
     /**
      * 添加数据库配置
      *
-     * @param $host
-     * @param $dbName
-     * @param $userName
-     * @param $password
-     * @param string $charset
+     * @param string $dbAliasName 数据库别名，用来识别不同的配置的
+     * @param string $host        服务器
+     * @param string $dbName      数据库名
+     * @param string $userName    用户名
+     * @param string $password    密码
+     * @param string $charset     默认字符
      *
      * @return DBConfig
      */
-    public function addDbConfig($host, $dbName, $userName, $password, $charset=self::CHARSET_UTF8): DBConfig
+    public function addDbConfig(string $dbAliasName, string $host, string $dbName, string $userName, string $password, string $charset=self::CHARSET_UTF8): DBConfig
     {
-        $this->dbConfig[$dbName] = [
+        $this->dbConfig[$dbAliasName] = [
             'type' => 'mysql',
             'host' => $host,
             'dbName' => $dbName,
@@ -69,24 +70,26 @@ final class DBConfig
     /**
      * 获取数据库连接配置
      *
-     * @param $dbName
+     * @param $dbAliasName
+     *
      * @return array
      */
-    public function getDbConfig($dbName): array
+    public function getDbConfig($dbAliasName): array
     {
-        return $this->dbConfig[$dbName] ?? [];
+        return $this->dbConfig[$dbAliasName] ?? [];
     }
 
     /**
      * 获取数据库连接
      *
-     * @param string $dbName
+     * @param string $dbAliasName
+     *
      * @return bool|\PDO
      */
-    public function getDbCache(string $dbName){
-        if(!isset($this->dbCache[$dbName]) or empty($this->dbCache)){
-            $dbConfig = $this->getDbConfig($dbName);
-            $this->dbCache[$dbName] = DbBehavior::getInstance()->createDbLink(
+    public function getDbCache(string $dbAliasName){
+        if(!isset($this->dbCache[$dbAliasName]) or empty($this->dbCache)){
+            $dbConfig                    = $this->getDbConfig($dbAliasName);
+            $this->dbCache[$dbAliasName] = DbBehavior::getInstance()->createDbLink(
                 $dbConfig['type'],
                 $dbConfig['host'],
                 $dbConfig['dbName'],
@@ -96,7 +99,7 @@ final class DBConfig
             );
         }
 
-        return $this->dbCache[$dbName];
+        return $this->dbCache[$dbAliasName];
     }
 
 

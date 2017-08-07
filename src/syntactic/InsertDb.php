@@ -54,7 +54,7 @@ class InsertDb extends BaseDb
 
         // 插入
         $code = DbBehavior::getInstance()->insert(
-            DBConfig::getInstance()->getDbCache($this->_dbName),
+            DBConfig::getInstance()->getDbCache($this->dbAliasName),
             $this->_sqlStr,
             $this->_sqlValue
         );

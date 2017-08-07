@@ -46,7 +46,7 @@ class DeleteDb extends BaseDb
         $this->makeSqlStr();
 
         $code = DbBehavior::getInstance()->delete(
-            DBConfig::getInstance()->getDbCache($this->_dbName),
+            DBConfig::getInstance()->getDbCache($this->dbAliasName),
             $this->_sqlStr,
             $this->_sqlValue
         );

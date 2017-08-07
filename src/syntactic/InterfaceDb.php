@@ -22,9 +22,9 @@ interface InterfaceDb
      * InterfaceDb constructor.
      * 确定数据库名称
      *
-     * @param string $dbName
+     * @param string $dbAliasName
      */
-    public function __construct(string $dbName);
+    public function __construct(string $dbAliasName);
 
 
     /**

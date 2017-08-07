@@ -18,7 +18,7 @@ abstract class BaseDb implements InterfaceDb
     /**
      * @var string  当前查询连接的数据库名称
      */
-    protected $_dbName = null;
+    protected $dbAliasName = null;
 
     /**
      * @var string 保存sql参数
@@ -39,11 +39,11 @@ abstract class BaseDb implements InterfaceDb
      * BaseDb constructor.
      * 初始化语句（数据库名称）
      *
-     * @param string $dbName 数据库名称
+     * @param string $dbAliasName 数据库名称
      */
-    public function __construct(string $dbName)
+    public function __construct(string $dbAliasName)
     {
-        $this->_dbName = $dbName;
+        $this->dbAliasName = $dbAliasName;
     }
 
 
