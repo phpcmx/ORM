@@ -53,10 +53,12 @@ if(0){
 //        ->field(['id', 'name']) // 数组或者多参数均可
         ->where([
             'id' => 3,
+        ])
+        ->andWhere([
             'createTime' => ['>', date('Y-m-d H:i:s', time())]
         ])
-        ->group("name")
-        ->order('id desc')
+        ->groupBy("name")
+        ->orderBy('id desc')
 //        ->order(['id' => 'desc']) // 也是数组字符串双类型参数
         ->limit(10)
 //        ->limit(0, 10)
