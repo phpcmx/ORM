@@ -1,8 +1,8 @@
 {
-  "name": "phpcmx/ORM",
+  "name": "phpcmx/orm",
   "description": "a simple ORM. 一个简单的ORM",
   "license": "MIT",
-  "keywords": ["ORM", "phpcmx ORM"],
+  "keywords": ["orm", "ORM", "phpcmx ORM"],
   "require": {
       "php": ">=7.*"
   }
