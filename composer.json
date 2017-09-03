@@ -1,0 +1,9 @@
+{
+  "name": "phpcmx/ORM",
+  "description": "a simple ORM. 一个简单的ORM",
+  "license": "MIT",
+  "keywords": ["ORM", "phpcmx ORM"],
+  "require": {
+      "php": ">=7.*"
+  }
+}
