@@ -74,10 +74,21 @@ final class DBConfig
      *
      * @return array
      */
-    public function getDbConfig($dbAliasName): array
+    public function getDbConfig(string $dbAliasName): array
     {
         return $this->dbConfig[$dbAliasName] ?? [];
     }
+
+
+    /**
+     * 获取所有的数据库配置
+     * @return array
+     */
+    public function getAllDbConfig() : array
+    {
+        return $this->dbConfig;
+    }
+
 
     /**
      * 获取数据库连接
@@ -86,7 +97,7 @@ final class DBConfig
      *
      * @return bool|\PDO
      */
-    public function getDbCache(string $dbAliasName){
+    public function getDbLinkCache(string $dbAliasName){
         if(!isset($this->dbCache[$dbAliasName]) or empty($this->dbCache)){
             $dbConfig                    = $this->getDbConfig($dbAliasName);
             $this->dbCache[$dbAliasName] = DbBehavior::getInstance()->createDbLink(

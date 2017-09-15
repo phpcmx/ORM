@@ -170,7 +170,7 @@ class SelectDb extends BaseDb
 
         // 查询
         $result = DbBehavior::getInstance()->select(
-            DBConfig::getInstance()->getDbCache($this->dbAliasName),
+            DBConfig::getInstance()->getDbLinkCache($this->dbAliasName),
             $this->_sqlStr,
             $this->_sqlValue,
             $this->_mode);

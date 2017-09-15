@@ -4,5 +4,11 @@
   "license": "MIT",
   "keywords": ["orm", "ORM", "phpcmx ORM"],
   "require": {
+
+  },
+  "autoload": {
+    "psr-4": {
+      "phpcmx\\ORM\\": "src/"
+    }
   }
 }

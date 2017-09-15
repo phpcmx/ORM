@@ -12,16 +12,16 @@ use phpcmx\ORM\Tool\config\OrmConfig;
 use phpcmx\ORM\Tool\OrmTool;
 
 $naves = [
-        [
-            'title' => '生成model',
-            'url' => OrmTool::url('model'),
-//            'subNav' => [
-//                    [
-//                        'title' => 'sdfsdf',
-//                        'url' => '',
-//                    ]
-//            ]
-        ]
+    [
+        'title' => 'model管理',
+        'url' => OrmTool::url('model'),
+//        'subNav' => [
+//                [
+//                    'title' => 'sdfsdf',
+//                    'url' => '',
+//                ]
+//        ]
+    ],
 ];
 
 ?>

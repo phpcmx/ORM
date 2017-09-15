@@ -11,6 +11,8 @@
 
 namespace phpcmx\ORM\Tool;
 
+use phpcmx\ORM\Tool\config\OrmConfig;
+
 /**
  * Class Tool
  * 生成工具
@@ -19,7 +21,7 @@ namespace phpcmx\ORM\Tool;
  */
 class OrmTool
 {
-    static $action = 'index';
+    private static $action = 'index';
 
     /**
      * 调度类，根据请求，请求不同的页面展示
@@ -28,11 +30,11 @@ class OrmTool
         // 获取action
         self::$action = $_GET['action'] ?? 'index';
 
-        if(!method_exists(self::class, self::$action)){
+        if(!method_exists(self::class, self::$action.'Action')){
             self::$action = 'error404';
         }
 
-        self::{(self::$action)}();
+        self::{(self::$action)."Action"}();
     }
 
     /**
@@ -45,11 +47,21 @@ class OrmTool
         return '?'.http_build_query($_GET);
     }
 
+
+    /**
+     * 获取配置
+     * @return OrmConfig
+     */
+    public static function config()
+    {
+        return OrmConfig::getInstance();
+    }
+
     /**
      * 加载模板
      * @param string $name
      */
-    static function display($name = null){
+    private static function display($name = null){
         $html_name = $name ?: self::$action;
         $html_path = __DIR__."/page/{$html_name}.php";
         if(file_exists($html_path)){
@@ -60,21 +72,26 @@ class OrmTool
     /**
      * 404页面
      */
-    static function error404(){
+    private static function error404Action(){
         self::display();
     }
 
     /**
      * 主页
      */
-    static function index(){
+    private static function indexAction(){
         self::display();
     }
 
     /**
      * 生成model的页面
      */
-    static function model(){
+    private static function modelAction(){
+        self::display();
+    }
+
+    private static function modelListAction()
+    {
         self::display();
     }
 }

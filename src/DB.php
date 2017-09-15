@@ -8,12 +8,7 @@
 
 namespace phpcmx\ORM;
 use PDO;
-use phpcmx\ORM\syntactic\DeleteDb;
-use phpcmx\ORM\syntactic\InsertDb;
-use phpcmx\ORM\syntactic\SelectDb;
-use phpcmx\ORM\syntactic\Sql;
 use phpcmx\ORM\syntactic\Transaction;
-use phpcmx\ORM\syntactic\UpdateDb;
 use phpcmx\ORM\syntactic\WhereMaker;
 
 /**
@@ -43,86 +38,6 @@ final class DB
         return WhereMaker::getInstance();
     }
 
-    /**
-     * 返回插入对象
-     *
-     * @param string $dbAliasName
-     * @param string $tableName
-     *
-     * @return InsertDb
-     */
-    static function insert($dbAliasName, $tableName = null):InsertDb{
-        $operation = new InsertDb($dbAliasName);
-        if(!is_null($tableName))
-            return $operation->table($tableName);
-        else
-            return $operation;
-    }
-
-
-    /**
-     * 返回删除对象
-     *
-     * @param string $dbAliasName
-     * @param string $tableName
-     *
-     * @return DeleteDb
-     */
-    static function delete($dbAliasName, $tableName = null):DeleteDb{
-        $operation = new DeleteDb($dbAliasName);
-        if(!is_null($tableName))
-            return $operation->table($tableName);
-        else
-            return $operation;
-    }
-
-
-    /**
-     * 返回更新对象
-     *
-     * @param $dbAliasName
-     * @param $tableName
-     *
-     * @return UpdateDb
-     */
-    static function update($dbAliasName, $tableName):UpdateDb{
-        $operation = new UpdateDb($dbAliasName);
-        if(!is_null($tableName))
-            return $operation->table($tableName);
-        else
-            return $operation;
-    }
-
-
-    /**
-     * 返回查询对象
-     *
-     * @param string $dbAliasName
-     * @param string $tableName
-     *
-     * @return SelectDb
-     */
-    static function select($dbAliasName, $tableName = null):SelectDb{
-        $operation = new SelectDb($dbAliasName);
-        if(!is_null($tableName))
-            return $operation->table($tableName);
-        else
-            return $operation;
-    }
-
-
-    /**
-     * 返回sql执行对象
-     *
-     * @param $dbAliasName
-     *
-     * @return Sql
-     */
-    static function sql($dbAliasName):Sql{
-        $operation = new Sql($dbAliasName);
-        return $operation;
-    }
-
 
     /**
      * 返回事务
@@ -133,5 +48,28 @@ final class DB
      */
     static function transaction($dbAliasName):Transaction{
         return new Transaction($dbAliasName);
+    }
+
+
+    /**
+     * 返回数据库操作
+     *
+     * @return DBQuery
+     *
+     */
+    public static function query()
+    {
+        return DBQuery::getInstance();
+    }
+
+
+    /**
+     * 返回config对象
+     * @return DBConfig
+     */
+
+    public static function config()
+    {
+        return DBConfig::getInstance();
     }
 }

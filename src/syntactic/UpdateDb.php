@@ -68,7 +68,7 @@ class UpdateDb extends BaseDb
         $this->makeSqlValue();
 
         $row = DbBehavior::getInstance()->update(
-            DBConfig::getInstance()->getDbCache($this->dbAliasName),
+            DBConfig::getInstance()->getDbLinkCache($this->dbAliasName),
             $this->_sqlStr,
             $this->_sqlValue
         );

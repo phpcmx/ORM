@@ -25,7 +25,7 @@ class Transaction extends BaseDb
     }
 
     public function beginTransaction(){
-        $pdoLink = DBConfig::getInstance()->getDbCache($this->dbAliasName);
+        $pdoLink = DBConfig::getInstance()->getDbLinkCache($this->dbAliasName);
 
         $pdoLink->setAttribute(PDO::ATTR_AUTOCOMMIT, 0);//这个是通过设置属性方法进行关闭自动提交和上面的功能一样
         $pdoLink->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
@@ -35,7 +35,7 @@ class Transaction extends BaseDb
 
     public function rollBack()
     {
-        $pdoLink = DBConfig::getInstance()->getDbCache($this->dbAliasName);
+        $pdoLink = DBConfig::getInstance()->getDbLinkCache($this->dbAliasName);
 
         $re = $pdoLink->rollBack();
 //        $this->db->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);
@@ -43,7 +43,7 @@ class Transaction extends BaseDb
     }
 
     public function commit(){
-        $pdoLink = DBConfig::getInstance()->getDbCache($this->dbAliasName);
+        $pdoLink = DBConfig::getInstance()->getDbLinkCache($this->dbAliasName);
 
         $re = $pdoLink->commit();
         $pdoLink->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);
