@@ -16,20 +16,37 @@ use phpcmx\ORM\inc\traits\FinalSingleEngine;
 
 class OrmConfig
 {
+    // 单例
     use FinalSingleEngine;
+
 
     /**
      * @var string 网站名称
      */
     public $webName = '不二ORM';
 
+
     /**
-     * @var null 网站后缀
+     * @var string 网站后缀
      */
     public $webTitleSufFix = null;
 
+
+    /**
+     * 初始化数据
+     * OrmConfig constructor.
+     */
     public function __construct()
     {
         $this->webTitleSufFix = ' -- '.$this->webName;
+    }
+
+
+    /**
+     * 获取
+     */
+    public function getModelRuntime()
+    {
+
     }
 }
