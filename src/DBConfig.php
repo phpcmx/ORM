@@ -122,4 +122,19 @@ final class DBConfig
     public function isKeep($value):bool{
         return in_array(strtolower($value), $this->keep);
     }
+
+
+    /**
+     * 地址转换函数
+     * {vendor}{phpcmx}
+     * @param $filePath
+     */
+    public static function filePathReplace($filePath)
+    {
+        $replace = [];
+        $replace['{vendor}'] = dirname(dirname(DB::DIR_PACKAGE()));
+        $replace['{phpcmx}'] = $replace['{vendor}'].DIRECTORY_SEPARATOR."phpcmx";
+
+        return strtr($filePath, $replace);
+    }
 }

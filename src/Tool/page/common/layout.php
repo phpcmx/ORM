@@ -10,13 +10,15 @@
  */
 use phpcmx\ORM\Tool\config\OrmConfig;
 /** @var $html_path string */
+/** @var $html_name string */
+/** @var $title string */
 
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title> 生成工具<?= OrmConfig::getInstance()->webTitleSufFix?></title>
+    <title> <?=$title??$html_name  ?><?= OrmConfig::getInstance()->webTitleSufFix?></title>
     <!-- 包含头部信息用于适应不同设备 -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 包含 bootstrap 样式表 -->

@@ -72,4 +72,14 @@ final class DB
     {
         return DBConfig::getInstance();
     }
+
+
+    /**
+     * 返回项目根目录
+     * @return string
+     */
+    public static function DIR_PACKAGE()
+    {
+        return dirname(__DIR__);
+    }
 }
