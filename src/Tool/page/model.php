@@ -8,6 +8,8 @@
  *
  * $Id$
  */
+
+/** @var $allDbConfig array */
 ?>
 
 <div class="row clearfix">
@@ -48,7 +50,7 @@
             <tbody>
             <?php
             $index = 0;
-            foreach (\phpcmx\ORM\DB::config()->getAllDbConfig() as $dbAliaName => $config){
+            foreach ($allDbConfig as $dbAliaName => $config){
                 ?>
                 <tr>
                     <td><?=++$index?></td>
@@ -59,7 +61,7 @@
                     <td><?=$config['userName']?></td>
                     <td><?=$config['password']?></td>
                     <td><?=$config['charset']?></td>
-                    <td><a href="?action=modelList" class="btn btn-success">管理模型</a> </td>
+                    <td><a href="?action=modelList&n=<?=$dbAliaName?>" class="btn btn-success">管理模型</a> </td>
                 </tr>
             <?php
             }

@@ -11,6 +11,7 @@
 
 namespace phpcmx\ORM\Tool;
 
+use phpcmx\ORM\DB;
 use phpcmx\ORM\Tool\config\OrmConfig;
 
 /**
@@ -59,20 +60,47 @@ class OrmTool
 
     /**
      * 加载模板
+     *
      * @param string $name
+     *
+     * @throws \Exception
      */
     private static function display($name = null){
         $html_name = $name ?: self::$action;
         $html_path = __DIR__."/page/{$html_name}.php";
-        if(file_exists($html_path)){
-            include __DIR__."/page/common/layout.php";
+        if(!file_exists($html_path)){
+            throw new \Exception('未找到模板页面:'.$html_path);
         }
+
+        $params = self::assign();
+        extract($params);
+
+        include __DIR__."/page/common/layout.php";
+    }
+
+
+    /**
+     * 设置变量
+     * @param array $userParams
+     *
+     * @return array
+     * @author 曹梦欣 <caomengxin@zhibo.tv>
+     */
+    private static function assign($userParams = []){
+        static $params = [];
+        if(!empty($userParams))
+            $params = array_merge($params, $userParams);
+        else
+            return $params;
     }
 
     /**
      * 404页面
      */
     private static function error404Action(){
+        self::assign([
+            'title' => '404',
+        ]);
         self::display();
     }
 
@@ -80,6 +108,9 @@ class OrmTool
      * 主页
      */
     private static function indexAction(){
+        self::assign([
+            'title' => '生成工具',
+        ]);
         self::display();
     }
 
@@ -87,11 +118,27 @@ class OrmTool
      * 生成model的页面
      */
     private static function modelAction(){
+        self::assign([
+            'title' => '数据库配置列表',
+            'allDbConfig' => DB::config()->getAllDbConfig(),
+        ]);
         self::display();
     }
 
+    /**
+     * model配置页面
+     * @author 曹梦欣 <caomengxin@zhibo.tv>
+     */
     private static function modelListAction()
     {
+        $dbAliasName = $_GET['n']??null;
+        $dbConfig = DB::config()->getDbConfig($dbAliasName);
+        // 默认参数
+        self::config()
+
+        self::assign([
+            'title' => 'model生成页面',
+        ]);
         self::display();
     }
 }
