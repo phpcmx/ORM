@@ -90,7 +90,7 @@ class OrmConfig
      *
      * @param $name
      */
-    public function hook($name)
+    private function hook($name)
     {
         if (method_exists($this, 'hook' . ucfirst($name))) {
             $this->{'hook' . ucfirst($name)}();
@@ -105,7 +105,7 @@ class OrmConfig
     /**
      * webTitleSufFix hook
      */
-    public function hookWebTitleSufFix()
+    private function hookWebTitleSufFix()
     {
         // 赋值前缀
         $this->webTitleSufFix = ' -- ' . $this->webName;
@@ -114,13 +114,13 @@ class OrmConfig
     /**
      * modelPath hook
      */
-    public function hookModelPath()
+    private function hookModelPath()
     {
         // 从缓存中获取
         $this->modelPath = $this->loadModelConfig('modelPath');
     }
 
-    public function hookModelNamespace()
+    private function hookModelNamespace()
     {
         // 从缓存中获取
         $this->modelNamespace = $this->loadModelConfig('modelNamespace');

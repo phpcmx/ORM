@@ -22,7 +22,11 @@ use phpcmx\ORM\Tool\config\OrmConfig;
     <!-- 包含头部信息用于适应不同设备 -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 包含 bootstrap 样式表 -->
-    <link rel="stylesheet" href="https://apps.bdimg.com/libs/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- 可选: 包含 jQuery 库 -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<!--    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
 </head>
 
 <body>
@@ -32,10 +36,9 @@ use phpcmx\ORM\Tool\config\OrmConfig;
 </div>
 
 <!-- JavaScript 放置在文档最后面可以使页面加载速度更快 -->
-<!-- 可选: 包含 jQuery 库 -->
-<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 <!-- 可选: 合并了 Bootstrap JavaScript 插件 -->
-<script src="https://apps.bdimg.com/libs/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<!--<script src="https://cdn.bootcss.com/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>-->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>
 
 </html>

@@ -12,6 +12,7 @@
 namespace phpcmx\ORM\Tool;
 
 use phpcmx\ORM\DB;
+use phpcmx\ORM\DBConfig;
 use phpcmx\ORM\Tool\config\OrmConfig;
 
 /**
@@ -181,5 +182,42 @@ class OrmTool
             ]
         );
         self::display();
+    }
+
+
+    /**
+     * 系统目录结构
+     */
+    private static function ajaxDirAction()
+    {
+        // 参数
+        $defaultDir = $_POST['default'] ?? '';
+        if(!is_dir($defaultDir)){
+            $defaultDir = DBConfig::filePathReplace('{vendor}');
+        }
+
+        // dir对象
+        $dir = dir($defaultDir);
+
+        // 目录列表
+        $list = [];
+        while($dirName = $dir->read()){
+            if(in_array($dirName, ['.', '..']) or !is_dir($dir->path.DIRECTORY_SEPARATOR.$dirName)){
+                continue;
+            }
+            $list[] = $dirName;
+        }
+
+        // 返回信息
+        $return = [
+            'path' => $dir->path,
+            'dir' => $list
+        ];
+        header("content-type:text/json");
+        echo  json_encode([
+            'status' => 200,
+            'message' => 'ok',
+            'data' => $return
+        ]);
     }
 }
