@@ -25,6 +25,11 @@ class OrmTool
 {
     private static $action = 'index';
 
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// 模板方法
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * 调度类，根据请求，请求不同的页面展示
      */
@@ -100,10 +105,14 @@ class OrmTool
         static $params = [];
         if (!empty($userParams)) {
             $params = array_merge($params, $userParams);
-        } else {
-            return $params;
         }
+
+        return $params;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// 静态的页面方法
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * 404页面
@@ -179,6 +188,7 @@ class OrmTool
         self::assign(
             [
                 'title' => 'model默认配置',
+                'defaultDir' => DBConfig::filePathReplace('{vendor}'),
             ]
         );
         self::display();
@@ -191,9 +201,17 @@ class OrmTool
     private static function ajaxDirAction()
     {
         // 参数
-        $defaultDir = $_POST['default'] ?? '';
+        $defaultDir = $_POST['dir'] ?? '';
+        $defaultDir = strtr($defaultDir, [
+            '\\' => DIRECTORY_SEPARATOR,
+            '/' => DIRECTORY_SEPARATOR
+        ]);
         if(!is_dir($defaultDir)){
             $defaultDir = DBConfig::filePathReplace('{vendor}');
+            self::ajaxError('dir is not exist', [
+                'dir' => $_POST['dir'],
+                'defaultDir' => $defaultDir,
+            ]);
         }
 
         // dir对象
@@ -208,16 +226,51 @@ class OrmTool
             $list[] = $dirName;
         }
 
+        // 获取文件夹信息
+        $info = explode(DIRECTORY_SEPARATOR, $dir->path);
+
         // 返回信息
         $return = [
-            'path' => $dir->path,
-            'dir' => $list
+            'dir' => $dir->path,
+            'info' => $info,
+            'list' => $list,
         ];
-        header("content-type:text/json");
-        echo  json_encode([
-            'status' => 200,
-            'message' => 'ok',
-            'data' => $return
+
+        self::ajaxSuccess($return);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// 通用方法
+    ////////////////////////////////////////////////////////////////////////////
+
+    private static function ajaxReturn($array)
+    {
+        header('content-type:text/json');
+        echo json_encode($array);
+    }
+
+    private static function ajaxError($type, $data)
+    {
+        static $typeList = [
+            'dir is not exist' => -1,
+        ];
+
+        if(!isset($typeList[$type])){
+            throw new \LogicException('未知的错误类型：'.$type);
+        }
+
+        $status = $typeList[$type];
+        $message = $type;
+
+        self::ajaxReturn([
+            'status' => $status,
+            'message' => $message,
+            'data' => $data,
         ]);
+    }
+
+    private static function ajaxSuccess($data)
+    {
+
     }
 }
