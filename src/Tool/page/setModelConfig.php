@@ -119,13 +119,18 @@
         var html = "";
         var breadStr = '';
         for(var i=0; i<d.info.length; i++){
+            var showBreadStr = '';
             if(i===1){
                 breadStr += d.info[i-1];
+                if(breadStr === ''){
+                    showBreadStr = '/';
+                }
             }else if(i!==0){
                 breadStr += d.separator+d.info[i-1];
+                showBreadStr = breadStr;
             }
             var id = "bread"+i;
-            html += "<li class='dropdown'><a id='"+id+"' class='breadList dropdown-toggle' data-toggle='dropdown' data-dir='"+breadStr+"' href='javascript:void(0);'>"+d.info[i]+"</a><ul id='drow-"+id+"' class='dropdown-menu' role='menu' aria-labelledby='"+id+"'></ul></li>";
+            html += "<li class='dropdown'><a id='"+id+"' class='breadList dropdown-toggle' data-toggle='dropdown' data-dir='"+showBreadStr+"' href='javascript:void(0);'>"+d.info[i]+"</a><ul id='drow-"+id+"' class='dropdown-menu' role='menu' aria-labelledby='"+id+"'></ul></li>";
         }
 
         var list = "";

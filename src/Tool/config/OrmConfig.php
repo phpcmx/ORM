@@ -59,6 +59,7 @@ class OrmConfig
     public function __get($name)
     {
         if (!isset($this->config[$name])) {
+            var_dump($this->config);
             throw new \LogicException('未知配置：' . $name);
         }
 
@@ -135,13 +136,33 @@ class OrmConfig
     private function hookGetModelPath()
     {
         // 从缓存中获取
-        $this->modelPath = $this->loadModelConfig('modelPath');
+        $this->modelPath = $this->config['modelPath'] ?: $this->loadModelConfig('modelPath');
     }
 
     private function hookGetModelNamespace()
     {
         // 从缓存中获取
-        $this->modelNamespace = $this->loadModelConfig('modelNamespace');
+        $this->modelNamespace = $this->config['modelNamespace'] ?: $this->loadModelConfig('modelNamespace');
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// hookSet
+    ////////////////////////////////////////////////////////////////////////////
+
+
+    private function hookSetModelPath($value)
+    {
+        $this->resetModelConfigCache([
+            '{modelPath}' => $value,
+        ]);
+    }
+
+    private function hookSetModelNamespace($value)
+    {
+        $this->resetModelConfigCache([
+            '{modelNamespace}' => $value,
+        ]);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -182,6 +203,10 @@ class OrmConfig
      */
     public function resetModelConfigCache(array $config)
     {
+        $config = array_merge([
+            '{modelPath}' => $this->modelPath,
+            '{modelNamespace}' => $this->modelNamespace,
+        ], $config);
         $filePath = DBConfig::filePathReplace($this->modelConfigFilePath);
         $this->makeDir(dirname($filePath));
         if (!file_put_contents(
@@ -194,7 +219,7 @@ class OrmConfig
             )
         )
         ) {
-            throw new \LogicException('生成文件权限不足：' . $filePath);
+            throw new \LogicException('生成文件失败：' . $filePath);
         }
     }
 

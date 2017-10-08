@@ -42,7 +42,14 @@ class OrmTool
             self::$action = 'error404';
         }
 
-        self::{(self::$action) . "Action"}();
+        // 注册error handler
+        self::registerErrorHandler();
+
+        try {
+            self::{(self::$action) . "Action"}();
+        }catch (\Exception $e){
+            var_dump($e);die();
+        }
     }
 
     /**
@@ -193,7 +200,8 @@ class OrmTool
             self::config()->modelNamespace = $namespace;
 
             // 设置文件缓存 并跳回正常流程
-            header("location:" . self::url('modelList'));
+//            header("location:" . self::url('modelList'));
+            die();
         }
 
         self::assign(
@@ -218,8 +226,13 @@ class OrmTool
             '\\' => DIRECTORY_SEPARATOR,
             '/' => DIRECTORY_SEPARATOR
         ]);
-        if(!is_dir($defaultDir)){
-            $defaultDir = DBConfig::filePathReplace('{phpcmx}\\orm\\src\\model');
+        // 判断linux下的一种特殊情况
+        if($_POST['dir']=='/' and is_dir('/')){
+            $defaultDir = '/';
+        }
+        // 如果不是目录就返回异常
+        else if(!is_dir($defaultDir)){
+            $defaultDir = DBConfig::filePathReplace('{phpcmx}'.DIRECTORY_SEPARATOR.'orm'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'model');
             self::ajaxError('dir is not exist', [
                 'dir' => $_POST['dir'],
                 'defaultDir' => $defaultDir,
@@ -293,5 +306,33 @@ class OrmTool
             'message' => 'ok',
             'data' => $data,
         ]);
+    }
+
+
+    private static function registerErrorHandler()
+    {
+        set_error_handler(function($ErrNo, $ErrMsg, $File, $Line, $Vars){
+            $ErrorType = array(1=>"Error", 2=>"Warning", 4=>"Parsing Error",
+                               8=>"Notice", 16=>"Core Error", 32=>"Core Warning",
+                               64=>"Complice Error", 128=>"Compile Warning", 256=>"User Error",
+                               512=>"User Warning", 1024=>"User Notice", 2048=>"Strict Notice");
+            $Time = date('Y-m-d H:i:s');
+            $Err = <<<ERROR_MESSAGE
+        <errorentry>  
+            <time>$Time</time>  
+            <number>$ErrNo</number>  
+            <type>$ErrorType[$ErrNo]</type>  
+            <errmsg><b>$ErrMsg</b></errmsg>  
+            <filename>$File</filename>  
+            <linenum>$Line</linenum>
+        </errorentry>
+ERROR_MESSAGE;
+            OrmTool::assign([
+                'err' => $Err,
+                'vars' => $Vars,
+            ]);
+            OrmTool::display('error');
+//            die();
+        });
     }
 }
