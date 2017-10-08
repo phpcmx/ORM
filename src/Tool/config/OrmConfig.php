@@ -63,7 +63,7 @@ class OrmConfig
         }
 
         // 调用钩子
-        $this->hook($name);
+        $this->hookGet($name);
 
         return $this->config[$name];
     }
@@ -81,31 +81,49 @@ class OrmConfig
             throw new \LogicException('未知配置：' . $name);
         }
 
+        // 调用设置钩子
+        $this->hookSet($name, $value);
+
         return $this->config[$name] = $value;
     }
 
 
     /**
-     * hook
+     * hookGet
      *
      * @param $name
      */
-    private function hook($name)
+    private function hookGet($name)
     {
-        if (method_exists($this, 'hook' . ucfirst($name))) {
-            $this->{'hook' . ucfirst($name)}();
+        if (method_exists($this, 'hookGet' . ucfirst($name))) {
+            $this->{'hookGet' . ucfirst($name)}();
+        }
+    }
+
+
+    /**
+     * hookSet
+     * @param $name
+     * @param $value
+     *
+     * @author 曹梦欣 <caomengxin@zhibo.tv>
+ */
+    private function hookSet($name, $value)
+    {
+        if (method_exists($this, 'hookSet' . ucfirst($name))) {
+            $this->{'hookSet' . ucfirst($name)}($value);
         }
     }
 
 
     ////////////////////////////////////////////////////////////////////////////
-    /// hook
+    /// hookGet
     ////////////////////////////////////////////////////////////////////////////
 
     /**
      * webTitleSufFix hook
      */
-    private function hookWebTitleSufFix()
+    private function hookGetWebTitleSufFix()
     {
         // 赋值前缀
         $this->webTitleSufFix = ' -- ' . $this->webName;
@@ -114,13 +132,13 @@ class OrmConfig
     /**
      * modelPath hook
      */
-    private function hookModelPath()
+    private function hookGetModelPath()
     {
         // 从缓存中获取
         $this->modelPath = $this->loadModelConfig('modelPath');
     }
 
-    private function hookModelNamespace()
+    private function hookGetModelNamespace()
     {
         // 从缓存中获取
         $this->modelNamespace = $this->loadModelConfig('modelNamespace');

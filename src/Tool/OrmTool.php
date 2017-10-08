@@ -185,10 +185,22 @@ class OrmTool
      */
     private static function setModelConfigAction()
     {
+        if($_POST){
+            $dir = $_POST['dir'];
+            $namespace = $_POST['namespace'];
+
+            self::config()->modelPath = $dir;
+            self::config()->modelNamespace = $namespace;
+
+            // 设置文件缓存 并跳回正常流程
+            header("location:" . self::url('modelList'));
+        }
+
         self::assign(
             [
                 'title' => 'model默认配置',
-                'defaultDir' => DBConfig::filePathReplace('{vendor}'),
+                'defaultDir' => DBConfig::filePathReplace('{phpcmx}'.DIRECTORY_SEPARATOR.'orm'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'model'),
+                'defaultNamespace' => 'phpcmx\\orm\\model',
             ]
         );
         self::display();
@@ -201,13 +213,13 @@ class OrmTool
     private static function ajaxDirAction()
     {
         // 参数
-        $defaultDir = $_POST['dir'] ?? '';
+        $defaultDir = mb_convert_encoding(rtrim($_POST['dir'], DIRECTORY_SEPARATOR), 'gbk') ?? '';
         $defaultDir = strtr($defaultDir, [
             '\\' => DIRECTORY_SEPARATOR,
             '/' => DIRECTORY_SEPARATOR
         ]);
         if(!is_dir($defaultDir)){
-            $defaultDir = DBConfig::filePathReplace('{vendor}');
+            $defaultDir = DBConfig::filePathReplace('{phpcmx}\\orm\\src\\model');
             self::ajaxError('dir is not exist', [
                 'dir' => $_POST['dir'],
                 'defaultDir' => $defaultDir,
@@ -223,19 +235,24 @@ class OrmTool
             if(in_array($dirName, ['.', '..']) or !is_dir($dir->path.DIRECTORY_SEPARATOR.$dirName)){
                 continue;
             }
-            $list[] = $dirName;
+            $list[] = mb_convert_encoding($dirName, 'utf-8', 'gbk');
         }
 
         // 获取文件夹信息
-        $info = explode(DIRECTORY_SEPARATOR, $dir->path);
+        $path = mb_convert_encoding($dir->path, 'utf-8', 'gbk');
+        $info = rtrim($path, DIRECTORY_SEPARATOR);
+        $info = explode(DIRECTORY_SEPARATOR, $info);
+
 
         // 返回信息
         $return = [
-            'dir' => $dir->path,
+            'separator' => DIRECTORY_SEPARATOR,
+            'dir' => $path,
             'info' => $info,
             'list' => $list,
         ];
 
+//        var_export($return);
         self::ajaxSuccess($return);
     }
 
@@ -271,6 +288,10 @@ class OrmTool
 
     private static function ajaxSuccess($data)
     {
-
+        self::ajaxReturn([
+            'status' => 0,
+            'message' => 'ok',
+            'data' => $data,
+        ]);
     }
 }

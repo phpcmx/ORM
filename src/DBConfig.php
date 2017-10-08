@@ -127,7 +127,10 @@ final class DBConfig
     /**
      * 地址转换函数
      * {vendor}{phpcmx}
+     *
      * @param $filePath
+     *
+     * @return string
      */
     public static function filePathReplace($filePath)
     {
