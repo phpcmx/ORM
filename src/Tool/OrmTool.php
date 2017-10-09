@@ -192,9 +192,19 @@ class OrmTool
             ->query('show table status')
             ->execute();
 
+        // 添加是否已经存在文件的状态
+        foreach ($sqlResult as $index => $item) {
+            if(file_exists(self::makeModelFilePath($dbAliasName, $item['Name']))){
+                $sqlResult[$index]['fileStatus'] = 0;
+            }else{
+                $sqlResult[$index]['fileStatus'] = 1;
+            }
+        }
+
         self::assign(
             [
                 'title' => 'model生成页面',
+                'dbName' => DB::config()->getDbConfig($dbAliasName)['dbName'],
                 'modelPath' => $modelPath,
                 'modelNamespace' => $modelNamespace,
                 'tableList' => $sqlResult
@@ -388,5 +398,15 @@ ERROR_MESSAGE;
     public static function tableValue($info)
     {
         return $info ?? "<small class='text-muted'><em>(null)</em></small>";
+    }
+
+    public static function makeModelFilePath($dbAliaName, $tableName)
+    {
+        // 生成model文件的规则
+        $modelPath = self::config()->modelPath;
+
+        $className = strtr(ucwords(strtr($tableName, ['_'=>' '])), [' '=>'']);
+
+        return $modelPath.DIRECTORY_SEPARATOR.$className.".php";
     }
 }
