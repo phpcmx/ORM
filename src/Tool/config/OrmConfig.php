@@ -136,13 +136,17 @@ class OrmConfig
     private function hookGetModelPath()
     {
         // 从缓存中获取
-        $this->modelPath = $this->config['modelPath'] ?: $this->loadModelConfig('modelPath');
+        if(empty($this->config['modelPath'])){
+            $this->config['modelPath'] = $this->loadModelConfig('modelPath');
+        }
     }
 
     private function hookGetModelNamespace()
     {
         // 从缓存中获取
-        $this->modelNamespace = $this->config['modelNamespace'] ?: $this->loadModelConfig('modelNamespace');
+        if(empty($this->config['modelNamespace'])){
+            $this->config['modelNamespace'] = $this->loadModelConfig('modelNamespace');
+        }
     }
 
 
@@ -154,14 +158,14 @@ class OrmConfig
     private function hookSetModelPath($value)
     {
         $this->resetModelConfigCache([
-            '{modelPath}' => $value,
+            'modelPath' => $value,
         ]);
     }
 
     private function hookSetModelNamespace($value)
     {
         $this->resetModelConfigCache([
-            '{modelNamespace}' => $value,
+            'modelNamespace' => $value,
         ]);
     }
 
@@ -181,11 +185,12 @@ class OrmConfig
         static $modelConfig = null;
         if (is_null($modelConfig)) {
             // 加载文件配置
-            $filePath = DBConfig::filePathReplace($this->modelConfigFilePath);
+            $filePath = DBConfig::filePathReplace($this->config['modelConfigFilePath']);
             if (!file_exists($filePath)) {
                 // 没有找到配置缓存
-                return false;
+                return '';
             }
+            $modelConfig = include $filePath;
         }
 
         if (!isset($modelConfig[$name])) {
@@ -204,19 +209,14 @@ class OrmConfig
     public function resetModelConfigCache(array $config)
     {
         $config = array_merge([
-            '{modelPath}' => $this->modelPath,
-            '{modelNamespace}' => $this->modelNamespace,
+            'modelPath' => $this->__get('modelPath'),
+            'modelNamespace' => $this->__get('modelNamespace'),
         ], $config);
-        $filePath = DBConfig::filePathReplace($this->modelConfigFilePath);
+        $filePath = DBConfig::filePathReplace($this->config['modelConfigFilePath']);
         $this->makeDir(dirname($filePath));
         if (!file_put_contents(
             $filePath,
-            strtr(
-                file_get_contents(
-                    DBConfig::filePathReplace("{phpcmx}/orm/src/data/ormTool_model.data")
-                ),
-                $config
-            )
+            "<?php return ".var_export($config, true).";"
         )
         ) {
             throw new \LogicException('生成文件失败：' . $filePath);

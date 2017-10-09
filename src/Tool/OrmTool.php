@@ -47,23 +47,31 @@ class OrmTool
 
         try {
             self::{(self::$action) . "Action"}();
-        }catch (\Exception $e){
-            var_dump($e);die();
+        } catch (\Exception $e) {
+            var_dump($e);
+            die();
         }
     }
 
     /**
      * 生成url
      *
-     * @param $action
+     * @param      $action
+     *
+     * @param bool $absolute 是否是绝对连接（非绝对连接会有当前页面的get值）
      *
      * @return string
      */
-    static function url($action)
+    static function url($action, bool $absolute = false)
     {
-        $_GET['action'] = $action;
+        if ($absolute) {
+            $get = [];
+        } else {
+            $get = $_GET;
+        }
+        $get['action'] = $action;
 
-        return '?' . http_build_query($_GET);
+        return '?' . http_build_query($get);
     }
 
 
@@ -168,10 +176,9 @@ class OrmTool
      */
     private static function modelListAction()
     {
-        $dbAliasName = $_GET['n']??null;
-        $dbConfig    = DB::config()->getDbConfig($dbAliasName);
+        $dbAliasName = $_GET['n'] ?? null;
         // 默认参数
-        $modelPath      = self::config()->modelPath;
+        $modelPath = self::config()->modelPath;
         $modelNamespace = self::config()->modelNamespace;
         if ($modelPath === false or $modelNamespace === false) {
             header("location:" . self::url('setModelConfig'));
@@ -179,9 +186,18 @@ class OrmTool
             return;
         }
 
+        // 找到所有的表列表
+        $sqlResult = DB::query()
+            ->sql($dbAliasName)
+            ->query('show table status')
+            ->execute();
+
         self::assign(
             [
                 'title' => 'model生成页面',
+                'modelPath' => $modelPath,
+                'modelNamespace' => $modelNamespace,
+                'tableList' => $sqlResult
             ]
         );
         self::display();
@@ -192,7 +208,7 @@ class OrmTool
      */
     private static function setModelConfigAction()
     {
-        if($_POST){
+        if ($_POST) {
             $dir = $_POST['dir'];
             $namespace = $_POST['namespace'];
 
@@ -200,14 +216,18 @@ class OrmTool
             self::config()->modelNamespace = $namespace;
 
             // 设置文件缓存 并跳回正常流程
-//            header("location:" . self::url('modelList'));
-            die();
+            header("location:" . self::url('modelList'));
+            return;
         }
 
         self::assign(
             [
-                'title' => 'model默认配置',
-                'defaultDir' => DBConfig::filePathReplace('{phpcmx}'.DIRECTORY_SEPARATOR.'orm'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'model'),
+                'title'            => 'model默认配置',
+                'defaultDir'       => DBConfig::filePathReplace(
+                    '{phpcmx}' . DIRECTORY_SEPARATOR . 'orm'
+                    . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR
+                    . 'model'
+                ),
                 'defaultNamespace' => 'phpcmx\\orm\\model',
             ]
         );
@@ -221,22 +241,33 @@ class OrmTool
     private static function ajaxDirAction()
     {
         // 参数
-        $defaultDir = mb_convert_encoding(rtrim($_POST['dir'], DIRECTORY_SEPARATOR), 'gbk') ?? '';
-        $defaultDir = strtr($defaultDir, [
-            '\\' => DIRECTORY_SEPARATOR,
-            '/' => DIRECTORY_SEPARATOR
-        ]);
+        $defaultDir = mb_convert_encoding(
+                rtrim($_POST['dir'], DIRECTORY_SEPARATOR), 'gbk'
+            ) ?? '';
+        $defaultDir = strtr(
+            $defaultDir, [
+                '\\' => DIRECTORY_SEPARATOR,
+                '/'  => DIRECTORY_SEPARATOR
+            ]
+        );
         // 判断linux下的一种特殊情况
-        if($_POST['dir']=='/' and is_dir('/')){
+        if ($_POST['dir'] == '/' and is_dir('/')) {
             $defaultDir = '/';
-        }
-        // 如果不是目录就返回异常
-        else if(!is_dir($defaultDir)){
-            $defaultDir = DBConfig::filePathReplace('{phpcmx}'.DIRECTORY_SEPARATOR.'orm'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'model');
-            self::ajaxError('dir is not exist', [
-                'dir' => $_POST['dir'],
-                'defaultDir' => $defaultDir,
-            ]);
+        } // 如果不是目录就返回异常
+        else {
+            if (!is_dir($defaultDir)) {
+                $defaultDir = DBConfig::filePathReplace(
+                    '{phpcmx}' . DIRECTORY_SEPARATOR . 'orm'
+                    . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR
+                    . 'model'
+                );
+                self::ajaxError(
+                    'dir is not exist', [
+                        'dir'        => $_POST['dir'],
+                        'defaultDir' => $defaultDir,
+                    ]
+                );
+            }
         }
 
         // dir对象
@@ -244,8 +275,11 @@ class OrmTool
 
         // 目录列表
         $list = [];
-        while($dirName = $dir->read()){
-            if(in_array($dirName, ['.', '..']) or !is_dir($dir->path.DIRECTORY_SEPARATOR.$dirName)){
+        while ($dirName = $dir->read()) {
+            if (in_array($dirName, ['.', '..']) or !is_dir(
+                    $dir->path . DIRECTORY_SEPARATOR . $dirName
+                )
+            ) {
                 continue;
             }
             $list[] = mb_convert_encoding($dirName, 'utf-8', 'gbk');
@@ -260,9 +294,9 @@ class OrmTool
         // 返回信息
         $return = [
             'separator' => DIRECTORY_SEPARATOR,
-            'dir' => $path,
-            'info' => $info,
-            'list' => $list,
+            'dir'       => $path,
+            'info'      => $info,
+            'list'      => $list,
         ];
 
 //        var_export($return);
@@ -285,39 +319,51 @@ class OrmTool
             'dir is not exist' => -1,
         ];
 
-        if(!isset($typeList[$type])){
-            throw new \LogicException('未知的错误类型：'.$type);
+        if (!isset($typeList[$type])) {
+            throw new \LogicException('未知的错误类型：' . $type);
         }
 
         $status = $typeList[$type];
         $message = $type;
 
-        self::ajaxReturn([
-            'status' => $status,
-            'message' => $message,
-            'data' => $data,
-        ]);
+        self::ajaxReturn(
+            [
+                'status'  => $status,
+                'message' => $message,
+                'data'    => $data,
+            ]
+        );
     }
 
     private static function ajaxSuccess($data)
     {
-        self::ajaxReturn([
-            'status' => 0,
-            'message' => 'ok',
-            'data' => $data,
-        ]);
+        self::ajaxReturn(
+            [
+                'status'  => 0,
+                'message' => 'ok',
+                'data'    => $data,
+            ]
+        );
     }
 
 
     private static function registerErrorHandler()
     {
-        set_error_handler(function($ErrNo, $ErrMsg, $File, $Line, $Vars){
-            $ErrorType = array(1=>"Error", 2=>"Warning", 4=>"Parsing Error",
-                               8=>"Notice", 16=>"Core Error", 32=>"Core Warning",
-                               64=>"Complice Error", 128=>"Compile Warning", 256=>"User Error",
-                               512=>"User Warning", 1024=>"User Notice", 2048=>"Strict Notice");
-            $Time = date('Y-m-d H:i:s');
-            $Err = <<<ERROR_MESSAGE
+        set_error_handler(
+            function ($ErrNo, $ErrMsg, $File, $Line, $Vars) {
+                $ErrorType = array(1    => "Error", 2 => "Warning",
+                                   4    => "Parsing Error",
+                                   8    => "Notice", 16 => "Core Error",
+                                   32   => "Core Warning",
+                                   64   => "Complice Error",
+                                   128  => "Compile Warning",
+                                   256  => "User Error",
+                                   512  => "User Warning",
+                                   1024 => "User Notice",
+                                   2048 => "Strict Notice");
+                $Time = date('Y-m-d H:i:s');
+                $Err
+                    = <<<ERROR_MESSAGE
         <errorentry>  
             <time>$Time</time>  
             <number>$ErrNo</number>  
@@ -327,12 +373,20 @@ class OrmTool
             <linenum>$Line</linenum>
         </errorentry>
 ERROR_MESSAGE;
-            OrmTool::assign([
-                'err' => $Err,
-                'vars' => $Vars,
-            ]);
-            OrmTool::display('error');
+                OrmTool::assign(
+                    [
+                        'err'  => $Err,
+                        'vars' => $Vars,
+                    ]
+                );
+                OrmTool::display('error');
 //            die();
-        });
+            }
+        );
+    }
+
+    public static function tableValue($info)
+    {
+        return $info ?? "<small class='text-muted'><em>(null)</em></small>";
     }
 }

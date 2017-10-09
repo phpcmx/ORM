@@ -44,6 +44,7 @@ class Sql extends BaseDb
             $index = strlen($this->_sqlStr);
         }
         switch(strtoupper(substr(trim($this->_sqlStr), 0, $index))){
+            case 'SHOW':
             case 'SELECT':
                 $return = $pdoStatement->fetchAll();
                 break;

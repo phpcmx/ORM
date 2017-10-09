@@ -14,7 +14,7 @@ use phpcmx\ORM\Tool\OrmTool;
 $naves = [
     [
         'title' => 'model管理',
-        'url' => OrmTool::url('model'),
+        'url' => OrmTool::url('model', true),
 //        'subNav' => [
 //                [
 //                    'title' => 'sdfsdf',
