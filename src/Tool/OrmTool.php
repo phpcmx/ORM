@@ -139,7 +139,7 @@ class OrmTool
                 'title' => '404',
             ]
         );
-        self::display();
+        self::display('error404');
     }
 
     /**
@@ -312,6 +312,25 @@ class OrmTool
 //        var_export($return);
         self::ajaxSuccess($return);
     }
+
+
+    /**
+     * 生成对应类
+     */
+    private static function makeModelFileAction()
+    {
+        $dbAliaName = $_GET['n'] ?? null;
+        $tableName = $_GET['t'] ?? null;
+        if(empty($dbAliaName) or empty($tableName)){
+            self::error404Action();
+            return ;
+        }
+
+        $modelFilePath = self::makeModelFilePath($dbAliaName, $tableName);
+
+        self::display();
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////
     /// 通用方法

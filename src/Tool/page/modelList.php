@@ -15,10 +15,14 @@ use phpcmx\ORM\Tool\OrmTool;
 /** @var $tableList array */
 ?>
 
+
 <div class="row clearfix">
     <div class="col-md-12 column">
+        <button id="toggleMoreInfo" class="btn btn-success btn-lg">更多信息</button>
         <table class="table table-hover table-striped">
-            <caption><h1>数据库表【<?= $dbName ?>】</h1></caption>
+            <caption>
+                <h1>数据库表【<?= $dbName ?>】</h1>
+            </caption>
             <thead>
             <tr>
                 <th>
@@ -26,39 +30,39 @@ use phpcmx\ORM\Tool\OrmTool;
                     <br>表名
                 </th>
                 <th>#</th>
-                <th>
+                <th class="moreInfo hidden">
                     <small class="text-muted"><em>Engine</em></small>
                     <br>引擎
                 </th>
-                <th>
+                <th class="moreInfo hidden">
                     <small class="text-muted"><em>Version</em></small>
                     <br>版本
                 </th>
-                <th>
+                <th class="moreInfo hidden">
                     <small class="text-muted"><em>Rows</em></small>
                     <br>行
                 </th>
-                <th>
+                <th class="moreInfo hidden">
                     <small class="text-muted"><em>Data_length</em></small>
                     <br><small>数据量 字节</small>
                 </th>
-                <th>
+                <th class="moreInfo hidden">
                     <small class="text-muted"><em>Index_length</em></small>
                     <br><small>索引量 字节</small>
                 </th>
-                <th>
+                <th class="moreInfo hidden">
                     <small class="text-muted"><em>Auto_increment</em></small>
                     <br>自增量
                 </th>
-                <th>
+                <th class="moreInfo hidden">
                     <small class="text-muted"><em>Create_time</em></small>
                     <br>创建时间
                 </th>
-                <th>
+                <th class="moreInfo hidden">
                     <small class="text-muted"><em>Update_time</em></small>
                     <br>更新时间
                 </th>
-                <th>
+                <th class="moreInfo hidden">
                     <small class="text-muted"><em>Collation</em></small>
                     <br>字符集
                 </th>
@@ -80,19 +84,19 @@ use phpcmx\ORM\Tool\OrmTool;
                                 $item['Name']
                             ) ?></h4></td>
                     <td><?= ++$index ?></td>
-                    <td><?= OrmTool::tableValue($item['Engine']) ?></td>
-                    <td><?= OrmTool::tableValue($item['Version']) ?></td>
-                    <td><?= OrmTool::tableValue($item['Rows']) ?></td>
-                    <td><?= OrmTool::tableValue($item['Data_length']) ?><br>
+                    <td class="moreInfo hidden"><?= OrmTool::tableValue($item['Engine']) ?></td>
+                    <td class="moreInfo hidden"><?= OrmTool::tableValue($item['Version']) ?></td>
+                    <td class="moreInfo hidden"><?= OrmTool::tableValue($item['Rows']) ?></td>
+                    <td class="moreInfo hidden"><?= OrmTool::tableValue($item['Data_length']) ?><br>
                         <?php if($item['Data_length'] > 1024){$_t = $item['Data_length']/1024;if($_t<1024){echo $_t." KB";}else{$_t/=1024;echo $_t." MB";}} ?>
                     </td>
-                    <td><?= OrmTool::tableValue($item['Index_length']) ?><br>
+                    <td class="moreInfo hidden"><?= OrmTool::tableValue($item['Index_length']) ?><br>
                         <?php if($item['Index_length'] > 1024){$_t = $item['Index_length']/1024;if($_t<1024){echo $_t." KB";}else{$_t/=1024;echo $_t." MB";}} ?>
                     </td>
-                    <td><?= OrmTool::tableValue($item['Auto_increment']) ?></td>
-                    <td><?= OrmTool::tableValue($item['Create_time']) ?></td>
-                    <td><?= OrmTool::tableValue($item['Update_time']) ?></td>
-                    <td><?= OrmTool::tableValue($item['Collation']) ?></td>
+                    <td class="moreInfo hidden"><?= OrmTool::tableValue($item['Auto_increment']) ?></td>
+                    <td class="moreInfo hidden"><?= OrmTool::tableValue($item['Create_time']) ?></td>
+                    <td class="moreInfo hidden"><?= OrmTool::tableValue($item['Update_time']) ?></td>
+                    <td class="moreInfo hidden"><?= OrmTool::tableValue($item['Collation']) ?></td>
                     <td><?= OrmTool::tableValue($item['Comment']) ?></td>
                     <td>
                         <?php
@@ -130,3 +134,9 @@ use phpcmx\ORM\Tool\OrmTool;
         </table>
     </div>
 </div>
+
+<script>
+    $("#toggleMoreInfo").click(function(){
+        $('.moreInfo').toggleClass('hidden');
+    });
+</script>
