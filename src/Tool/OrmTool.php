@@ -180,7 +180,7 @@ class OrmTool
         // 默认参数
         $modelPath = self::config()->modelPath;
         $modelNamespace = self::config()->modelNamespace;
-        if ($modelPath === false or $modelNamespace === false) {
+        if (empty($modelPath) or empty($modelNamespace)) {
             header("location:" . self::url('setModelConfig'));
 
             return;
