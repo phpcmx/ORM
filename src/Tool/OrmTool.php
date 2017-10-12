@@ -328,6 +328,13 @@ class OrmTool
 
         $modelFilePath = self::makeModelFilePath($dbAliaName, $tableName);
 
+        self::assign([
+            'dbAliaName' => $dbAliaName,
+            'linkInfo' => DBConfig::getInstance()->getDbConfig($dbAliaName),
+            'tableName' => $tableName,
+            'modelFilePath' => $modelFilePath,
+            'modelNamespace' => self::config()->modelNamespace,
+        ]);
         self::display();
     }
 

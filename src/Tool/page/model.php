@@ -14,8 +14,10 @@
 
 <div class="row clearfix">
     <div class="col-md-12 column">
+        <h2><?=$title?></h2>
+        <hr>
         <table class="table table-hover table-striped">
-            <caption>数据库连接</caption>
+            <caption></caption>
             <thead>
             <tr>
                 <th>

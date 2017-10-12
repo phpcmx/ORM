@@ -18,10 +18,11 @@ use phpcmx\ORM\Tool\OrmTool;
 
 <div class="row clearfix">
     <div class="col-md-12 column">
+        <h2>数据库表【<?= $dbName ?>】</h2>
+        <hr>
         <button id="toggleMoreInfo" class="btn btn-success btn-lg">更多信息</button>
         <table class="table table-hover table-striped">
             <caption>
-                <h1>数据库表【<?= $dbName ?>】</h1>
             </caption>
             <thead>
             <tr>
