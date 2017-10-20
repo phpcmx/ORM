@@ -32,7 +32,7 @@ if(0) {
     $transaction = DB::transaction('test');
     $transaction->beginTransaction();
     // 插入返回的是 lastInsertId 最后插入数据id
-    DB::insert('test')
+    DB::query()->insert('test')
         ->table('test_table')
         ->one([
             'name' => '测试',
@@ -48,7 +48,7 @@ if(0) {
 // 查询
 if(0){
     // 查询返回的是多条数据数组
-    $dataList = DB::select('test', 'test_table')
+    $dataList = DB::query()->select('test', 'test_table')
         ->field('id', 'name')
 //        ->field(['id', 'name']) // 数组或者多参数均可
         ->where([
@@ -59,7 +59,7 @@ if(0){
         ])
         ->groupBy("name")
         ->orderBy('id desc')
-//        ->order(['id' => 'desc']) // 也是数组字符串双类型参数
+//        ->orderBy(['id' => 'desc']) // 也是数组字符串双类型参数
         ->limit(10)
 //        ->limit(0, 10)
 //        ->limit("0, 10")
@@ -71,7 +71,7 @@ if(0){
 // 删除
 if(0){
     // 返回影响行数
-    echo DB::delete('test', 'test_table')
+    echo DB::query()->delete('test', 'test_table')
         ->where([
             'id' => 2
         ])
@@ -81,7 +81,7 @@ if(0){
 // 更新
 if(0){
     // 返回影响行数
-    echo DB::update('test', 'test_table')
+    echo DB::query()->update('test', 'test_table')
         ->set([
             'name' => '123',
 //            'tess' => 'aaa',
@@ -96,7 +96,7 @@ if(0){
 // 执行sql语句
 if(0){
     // 根据执行语句的类型来决定返回的类型，说实在的，不是很建议使用，写出来也是为了尽可能保证完整性，满足所有的sql需求
-    $sql = DB::sql('test')
+    $sql = DB::query()->sql('test')
         ->query('select * from test_table')
         ->execute();
 

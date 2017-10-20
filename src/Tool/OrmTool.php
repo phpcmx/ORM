@@ -327,6 +327,7 @@ class OrmTool
         }
 
         $modelFilePath = self::makeModelFilePath($dbAliaName, $tableName);
+        $columns = DB::query()->sql($dbAliaName)->query();
 
         self::assign([
             'dbAliaName' => $dbAliaName,

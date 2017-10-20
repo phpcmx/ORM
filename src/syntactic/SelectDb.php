@@ -11,7 +11,9 @@ namespace phpcmx\ORM\syntactic;
 use phpcmx\ORM\behavior\DbBehavior;
 use phpcmx\ORM\DB;
 use phpcmx\ORM\DBConfig;
+use phpcmx\orm\entity\DataAdapter;
 use phpcmx\ORM\exception\LackOfOperation;
+use phpcmx\orm\inc\interf\Loadable;
 
 class SelectDb extends BaseDb
 {
@@ -26,6 +28,11 @@ class SelectDb extends BaseDb
     private $_limit = null;
 
     private $_mode = \PDO::FETCH_ASSOC;
+
+    /**
+     * @var Loadable
+     */
+    private $_loader = null;
 
 
     /**
@@ -103,7 +110,7 @@ class SelectDb extends BaseDb
      * @param string | array $order
      * @return $this
      */
-    public function order($order)
+    public function orderBy($order)
     {
         // 如果是字符串就直接赋值
         if(is_string($order)){
@@ -175,8 +182,21 @@ class SelectDb extends BaseDb
             $this->_sqlValue,
             $this->_mode);
 
+        if($this->_loader instanceof Loadable){
+            $return = new DataAdapter();
+            $loader = $this->_loader;
+            foreach ($result as $index => $item) {
+                /** @var Loadable $_tmp */
+                $_tmp = new $loader();
+                $_tmp->load($item);
+                $return[] = $_tmp;
+            }
+        }else{
+            $return = $result;
+        }
+
         // 返回结果
-        return $result;
+        return $return;
     }
 
 
@@ -208,11 +228,18 @@ class SelectDb extends BaseDb
     /**
      * 设置获取模式
      *
-     * @param null $mode
+     * @param int | Loadable $DB_MODE
+     *
      * @return $this
      */
-    public function returnAs($mode = null){
-        if($mode) $this->_mode = $mode;
+    public function returnAs($DB_MODE = null){
+        // 如果是配置的可加载的类
+        if($DB_MODE instanceof Loadable){
+            $this->_loader = $DB_MODE;
+        }
+
+        // 如果是配置选项 DB::MODE_BOTH
+        if ($DB_MODE) $this->_mode = $DB_MODE;
 
         return $this;
     }
