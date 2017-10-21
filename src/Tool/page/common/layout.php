@@ -27,11 +27,19 @@ use phpcmx\ORM\Tool\config\OrmConfig;
     <!-- 可选: 包含 jQuery 库 -->
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <!--    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
+
+    <style>
+        @media (min-width: 992px) {
+            .selfContainer{
+                margin-top:72px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<div class="container">
     <?php include __DIR__."/nav.php"?>
+<div class="container selfContainer">
     <?php include $html_path?>
 </div>
 

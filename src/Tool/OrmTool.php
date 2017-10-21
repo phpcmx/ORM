@@ -327,14 +327,17 @@ class OrmTool
         }
 
         $modelFilePath = self::makeModelFilePath($dbAliaName, $tableName);
-        $columns = DB::query()->sql($dbAliaName)->query();
+        $columns = DB::query()->sql($dbAliaName)->query("show full columns from `{$tableName}`")->execute();
 
         self::assign([
             'dbAliaName' => $dbAliaName,
+            // 连接信息
             'linkInfo' => DBConfig::getInstance()->getDbConfig($dbAliaName),
             'tableName' => $tableName,
             'modelFilePath' => $modelFilePath,
             'modelNamespace' => self::config()->modelNamespace,
+            // 字段列表
+            'columns' => $columns,
         ]);
         self::display();
     }
@@ -424,7 +427,18 @@ ERROR_MESSAGE;
 
     public static function tableValue($info)
     {
-        return $info ?? "<small class='text-muted'><em>(null)</em></small>";
+        $show = $info;
+        try{
+            if(is_null($info)){
+                throw new \Exception('(null)');
+            }elseif ($info === ''){
+                throw new \Exception("(empty string)");
+            }
+        }catch (\Exception $e){
+            $show = "<small class='text-muted'><em>{$e->getMessage()}</em></small>";
+        }
+
+        return $show;
     }
 
     public static function makeModelFilePath($dbAliaName, $tableName)

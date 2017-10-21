@@ -25,11 +25,22 @@ $naves = [
 ];
 
 ?>
+<style>
+    @media (min-width: 992px) {
+        .selfNavbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+        }
+    }
+</style>
 
-<div class="row clearfix">
+<div class="selfNavbar row clearfix">
     <div class="col-md-12 column">
 <nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
+    <div class="container-fluid container">
         <div class="navbar-header">
             <a class="navbar-brand" href="?action=index"><?= OrmConfig::getInstance()->webName?></a>
         </div>
