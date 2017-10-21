@@ -24,6 +24,8 @@ final class OrmApp
     use FinalSingleEngine;
 
 
+    const VERSION = 'v1.0.0';
+
     public function run(){
 
     }

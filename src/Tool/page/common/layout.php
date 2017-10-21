@@ -32,6 +32,7 @@ use phpcmx\ORM\Tool\config\OrmConfig;
         @media (min-width: 992px) {
             .selfContainer{
                 margin-top:72px;
+                min-height:500px;
             }
         }
     </style>

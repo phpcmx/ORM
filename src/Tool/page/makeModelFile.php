@@ -29,7 +29,7 @@ use phpcmx\ORM\Tool\OrmTool;
                 </tr>
                 <tr>
                     <td class="text-right">连接信息</td>
-                    <td></td>
+                    <td><?= json_encode($linkInfo)?></td>
                 </tr>
                 <tr>
                     <td class="text-right">表名</td>
@@ -37,11 +37,11 @@ use phpcmx\ORM\Tool\OrmTool;
                 </tr>
                 <tr>
                     <td class="text-right">文件位置</td>
-                    <td><?= $modelFilePath ?></td>
+                    <td><?= $modelFilePath ?><a class="btn btn-success pull-right" href="<?=OrmTool::url('setModelConfig')?>">修改</a> </td>
                 </tr>
                 <tr>
                     <td class="text-right">命名空间</td>
-                    <td><?= $modelNamespace ?></td>
+                    <td><?= $modelNamespace ?><a class="btn btn-success pull-right" href="<?=OrmTool::url('setModelConfig')?>">修改</a> </td>
                 </tr>
                 </tbody>
             </table>
@@ -114,7 +114,9 @@ use phpcmx\ORM\Tool\OrmTool;
                 </b>
             </blockquote>
 
-            <button class="btn btn-success">确认</button>
+            <p class="text-center">
+                <button class="btn btn-block btn-success btn-lg ">确认</button>
+            </p>
         </div>
     </div>
 </div>

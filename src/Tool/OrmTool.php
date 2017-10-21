@@ -23,6 +23,7 @@ use phpcmx\ORM\Tool\config\OrmConfig;
  */
 class OrmTool
 {
+    const VERSION = 'v1.0.0';
     private static $action = 'index';
 
 
@@ -233,12 +234,12 @@ class OrmTool
         self::assign(
             [
                 'title'            => 'model默认配置',
-                'defaultDir'       => DBConfig::filePathReplace(
+                'defaultDir'       => self::config()->modelPath ?: DBConfig::filePathReplace(
                     '{phpcmx}' . DIRECTORY_SEPARATOR . 'orm'
                     . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR
                     . 'model'
                 ),
-                'defaultNamespace' => 'phpcmx\\orm\\model',
+                'defaultNamespace' => self::config()->modelNamespace,
             ]
         );
         self::display();
