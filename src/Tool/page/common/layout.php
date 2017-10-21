@@ -42,6 +42,7 @@ use phpcmx\ORM\Tool\config\OrmConfig;
 <div class="container selfContainer">
     <?php include $html_path?>
 </div>
+    <?php include __DIR__."/bottom.php"?>
 
 <!-- JavaScript 放置在文档最后面可以使页面加载速度更快 -->
 <!-- 可选: 合并了 Bootstrap JavaScript 插件 -->
