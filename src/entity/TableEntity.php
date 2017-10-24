@@ -33,9 +33,9 @@ abstract class TableEntity implements Loadable
 
     /**
      * 数据库结构描述
-     * @return array
+     * @return string
      */
-    abstract public function definition() : array;
+    abstract public function definition() : string;
 
     /**
      * 更新数据到当前类内

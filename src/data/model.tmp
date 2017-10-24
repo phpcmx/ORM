@@ -1,11 +1,11 @@
 <?php
 /**
  * Created by phpcmx/orm.
- * date: {$date}
- * time: {$time}
+ * date: {date}
+ * time: {time}
  */
 
-namespace {$namespace};
+namespace {namespace};
 
 use phpcmx\orm\entity\TableEntity;
 
@@ -46,23 +46,12 @@ class {className} extends TableEntity{
     /**
      * 数据库结构描述
      *
-     * @return array
+     * @return string
      */
-    public function definition(): array
+    public function definition(): string
     {
-        return [
-            'primaryKey' => 'id',
-            'field' => [
-                'id' => [
-                    'type' => '',
-                    'param' => [],
-                    'default' => null,
-                    'extra' => 4,
-                ],
-                'name' => [
-
-                ],
-            ],
-        ];
+        return <<<DDL
+{DDL}
+DDL;
     }
 }

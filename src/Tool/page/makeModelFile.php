@@ -115,7 +115,7 @@ use phpcmx\ORM\Tool\OrmTool;
             </blockquote>
 
             <p class="text-center">
-                <button class="btn btn-block btn-success btn-lg ">确认</button>
+                <a href="<?=OrmTool::url('makeModelFile')?>&verify=1" class="btn btn-block btn-success btn-lg ">确认</a>
             </p>
         </div>
     </div>

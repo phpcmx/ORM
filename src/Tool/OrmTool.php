@@ -327,8 +327,27 @@ class OrmTool
             return ;
         }
 
-        $modelFilePath = self::makeModelFilePath($dbAliaName, $tableName);
-        $columns = DB::query()->sql($dbAliaName)->query("show full columns from `{$tableName}`")->execute();
+        $modelFilePath = self::makeModelFilePath($dbAliaName, $tableName, $className);
+        $columns = DB::query()
+            ->sql($dbAliaName)
+            ->query("show full columns from `{$tableName}`")
+            ->execute();
+
+        // 生成model文件
+        if(isset($_GET['verify'])){
+            $ddl = DB::query()->sql($dbAliaName)->query('show create table '.$tableName)->execute();
+            $ddl = $ddl[0]['Create Table'];
+
+            file_put_contents($modelFilePath, strtr(file_get_contents(DBConfig::filePathReplace("{phpcmx}/orm/src/data/model.tmp")), [
+                '{date}' => date('Y-m-d'),
+                '{time}' => date('H:i:s'),
+                '{namespace}' => self::config()->modelNamespace,
+                '{className}' => $className,
+                '{dbAliaName}' => $dbAliaName,
+                '{DDL}' => $ddl,
+            ]));
+            die();
+        }
 
         self::assign([
             'dbAliaName' => $dbAliaName,
@@ -442,7 +461,7 @@ ERROR_MESSAGE;
         return $show;
     }
 
-    public static function makeModelFilePath($dbAliaName, $tableName)
+    public static function makeModelFilePath($dbAliaName, $tableName, &$className=null)
     {
         // 生成model文件的规则
         $modelPath = self::config()->modelPath;
