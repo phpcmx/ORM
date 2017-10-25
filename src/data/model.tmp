@@ -14,8 +14,7 @@ use phpcmx\orm\entity\TableEntity;
  *
  * @package {namespace}
  *
- * @property int $id
- * @property string $name
+{property}
  */
 class {className} extends TableEntity{
 
@@ -37,10 +36,7 @@ class {className} extends TableEntity{
      */
     public function attribute(): array
     {
-        return [
-            'id' => 'ID',
-            'name' => '名字',
-        ];
+        return {fieldLabel};
     }
 
     /**

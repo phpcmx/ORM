@@ -14,6 +14,8 @@ namespace phpcmx\ORM\Tool;
 use phpcmx\ORM\DB;
 use phpcmx\ORM\DBConfig;
 use phpcmx\ORM\Tool\config\OrmConfig;
+use phpcmx\ORM\Tool\ddl\DDLCreateTable;
+use phpcmx\ORM\Tool\ddl\DDLParse;
 
 /**
  * Class Tool
@@ -114,7 +116,6 @@ class OrmTool
      * @param array $userParams
      *
      * @return array
-     * @author 曹梦欣 <caomengxin@zhibo.tv>
      */
     private static function assign($userParams = [])
     {
@@ -173,7 +174,6 @@ class OrmTool
     /**
      * model配置页面
      *
-     * @author 曹梦欣 <caomengxin@zhibo.tv>
      */
     private static function modelListAction()
     {
@@ -327,27 +327,21 @@ class OrmTool
             return ;
         }
 
+        // 生成model文件
+        if(isset($_GET['verify'])){
+            self::makeField($dbAliaName, $tableName);
+            header('location:'.self::url('modelList', true)."&n={$dbAliaName}");
+        }
+
         $modelFilePath = self::makeModelFilePath($dbAliaName, $tableName, $className);
         $columns = DB::query()
             ->sql($dbAliaName)
             ->query("show full columns from `{$tableName}`")
             ->execute();
 
-        // 生成model文件
-        if(isset($_GET['verify'])){
-            $ddl = DB::query()->sql($dbAliaName)->query('show create table '.$tableName)->execute();
-            $ddl = $ddl[0]['Create Table'];
+        $ddl = DB::query()->sql($dbAliaName)->query('show create table '.$tableName)->execute();
+        $ddl = $ddl[0]['Create Table'];
 
-            file_put_contents($modelFilePath, strtr(file_get_contents(DBConfig::filePathReplace("{phpcmx}/orm/src/data/model.tmp")), [
-                '{date}' => date('Y-m-d'),
-                '{time}' => date('H:i:s'),
-                '{namespace}' => self::config()->modelNamespace,
-                '{className}' => $className,
-                '{dbAliaName}' => $dbAliaName,
-                '{DDL}' => $ddl,
-            ]));
-            die();
-        }
 
         self::assign([
             'dbAliaName' => $dbAliaName,
@@ -358,6 +352,7 @@ class OrmTool
             'modelNamespace' => self::config()->modelNamespace,
             // 字段列表
             'columns' => $columns,
+            'ddl' => $ddl,
         ]);
         self::display();
     }
@@ -366,6 +361,82 @@ class OrmTool
     ////////////////////////////////////////////////////////////////////////////
     /// 通用方法
     ////////////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * 生成文件
+     * @param $dbAliaName
+     * @param $tableName
+     *
+     */
+    private static function makeField($dbAliaName, $tableName)
+    {
+        $modelFilePath = self::makeModelFilePath($dbAliaName, $tableName, $className);
+        $columns = DB::query()
+            ->sql($dbAliaName)
+            ->query("show full columns from `{$tableName}`")
+            ->execute();
+
+        $ddl = DB::query()->sql($dbAliaName)->query('show create table '.$tableName)->execute();
+        $ddl = $ddl[0]['Create Table'];
+
+        $fieldLabel = [];
+        foreach ($columns as $index => $column) {
+            $fieldLabel[$column['Field']] = $column['Comment'];
+        }
+
+        $ddlParse = new DDLParse($ddl);
+        $ddlParseClass = $ddlParse->getClass();
+        if($ddlParseClass===false){
+            throw new \RuntimeException('获取的ddl不符合规则要求:'.$ddl);
+        }
+        /** @var DDLCreateTable $createTable */
+        $createTable = new $ddlParseClass();
+        $createTable->load($ddl);
+
+        $fieldMaxLen = max(array_map(function($v){return strlen($v);}, $createTable->fields));
+
+        file_put_contents($modelFilePath, strtr(file_get_contents(DBConfig::filePathReplace("{phpcmx}/orm/src/data/model.tmp")), [
+            '{date}' => date('Y-m-d'),
+            '{time}' => date('H:i:s'),
+            '{namespace}' => self::config()->modelNamespace,
+            '{className}' => $className,
+            '{dbAliaName}' => $dbAliaName,
+            '{DDL}' => $ddl,
+            '{fieldLabel}' =>
+                "[\r\n".
+                implode(
+                    "",
+                    array_map(
+                        function($field, $label)use($fieldMaxLen){
+                            return sprintf("            %-".($fieldMaxLen+2)."s => %s,\r\n", var_export($field, 1), var_export($label, 1));
+                        },
+                        array_keys($fieldLabel),
+                        $fieldLabel
+                    )
+                ).
+                "        ]",
+            //                '{fieldLabel}' => strtr(var_export($fieldLabel, 1),['array ('=>'[', ')'=>'        ]', '  '=>'            ']),
+            '{property}' => implode('
+', array_map(function($v) use($fieldMaxLen){
+                $vType = strtolower($v['type']);
+                $type = in_array($vType, [
+                    'tinyint', 'smallint', 'mediumint', 'int', 'bigint'
+                ]) ? 'int' : (
+                in_array($vType, [
+                    'float', 'double'
+                ]) ? 'float' : (
+                in_array($vType, [
+                    'year', 'time', 'date', 'datetime', 'timestamp',
+                    'char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext', 'enum', 'set',
+                ]) ? 'string' : 'mixed'
+                )
+                );
+                return sprintf(" * @property %-6s \$%-{$fieldMaxLen}s %s(%s)", $type, $v['field'], $v['type'], $v['len']);
+            }, $createTable->fieldType)),
+        ]));
+    }
+
 
     private static function ajaxReturn($array)
     {

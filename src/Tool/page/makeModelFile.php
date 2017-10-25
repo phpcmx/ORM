@@ -14,6 +14,7 @@ use phpcmx\ORM\Tool\OrmTool;
 /** @var $modelFilePath string */
 /** @var $modelNamespace string */
 /** @var $columns array */
+/** @var $ddl string */
 ?>
 
 <div class="row clearfix">
@@ -106,6 +107,7 @@ use phpcmx\ORM\Tool\OrmTool;
                 ?>
                 </tbody>
             </table>
+            <pre><?=$ddl?></pre>
         </div>
         <div class="col-md-12 column">
             <blockquote class="text-warning">
