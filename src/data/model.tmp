@@ -1,13 +1,13 @@
 <?php
 /**
- * Created by phpcmx/orm.
+ * Created by phpcmx/ORM.
  * date: {date}
  * time: {time}
  */
 
 namespace {namespace};
 
-use phpcmx\orm\entity\TableEntity;
+use phpcmx\ORM\entity\TableEntity;
 
 /**
  * Class {className}

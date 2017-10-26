@@ -6,9 +6,9 @@
  * Time: 19:02
  */
 
-namespace phpcmx\orm\entity;
+namespace phpcmx\ORM\entity;
 
-use phpcmx\orm\inc\interf\Loadable;
+use phpcmx\ORM\inc\interf\Loadable;
 
 /**
  * 数据库模型
@@ -36,6 +36,23 @@ abstract class TableEntity implements Loadable
      * @return string
      */
     abstract public function definition() : string;
+
+    /**
+     * 不允许被实例化
+     * TableEntity constructor.
+     */
+    protected function __construct()
+    {
+    }
+
+    /**
+     * 生成实例化对象的唯一方法
+     * @return static
+     */
+    public static function createEntity()
+    {
+        return new static();
+    }
 
     /**
      * 更新数据到当前类内

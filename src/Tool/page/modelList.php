@@ -15,17 +15,33 @@ use phpcmx\ORM\Tool\OrmTool;
 /** @var $tableList array */
 ?>
 
+<style>
+    input.cbt:checked + label:after {
+        content: '已选择';
+        display:inline-block;
+    }
+    input.cbt{
+        display:inline-block;
+    }
+    input.cbt + label{
+        display: inline-block;
+    }
+</style>
 
+<form method="post" action="">
 <div class="row clearfix">
     <div class="col-md-12 column">
         <h2>数据库表【<?= $dbName ?>】</h2>
         <hr>
         <button id="toggleMoreInfo" class="btn btn-success btn-lg">更多信息</button>
+        <input type="submit" class="btn btn-success pull-right" value="生成选中(无验证)">
         <table class="table table-hover table-striped">
             <caption>
             </caption>
             <thead>
             <tr>
+                <th>
+                </th>
                 <th>
                     <small class="text-muted"><em>Name</em></small>
                     <br>表名
@@ -81,6 +97,14 @@ use phpcmx\ORM\Tool\OrmTool;
             foreach ($tableList as $index => $item) {
                 ?>
                 <tr>
+                    <td>
+                        <input id="tb_<?=$item['Name']?>" type="checkbox" class="checkbox cbt"
+                               name="table[]" value="<?=$item['Name']?>"
+                               <?=$item['fileStatus']==1?'checked':''?>
+                        >
+                        <label for="tb_<?=$item['Name']?>">
+                        </label>
+                    </td>
                     <td><h4 class="text-primary"><?= OrmTool::tableValue(
                                 $item['Name']
                             ) ?></h4></td>
@@ -117,10 +141,10 @@ use phpcmx\ORM\Tool\OrmTool;
                         <?php
                         switch ($item['fileStatus']){
                             case 0:
-                                echo "<a class='btn btn-warning' href='".OrmTool::url('makeModelFile')."&t={$item['Name']}'>覆盖生成</a>";
+                                echo "<a class='btn btn-warning' href='".OrmTool::url('makeModelFile')."&t={$item['Name']}'>覆盖详情</a>";
                                 break;
                             case 1:
-                                echo "<a class='btn btn-success' href='".OrmTool::url('makeModelFile')."&t={$item['Name']}'>生成</a>";
+                                echo "<a class='btn btn-success' href='".OrmTool::url('makeModelFile')."&t={$item['Name']}'>生成详情</a>";
                                 break;
                             default:
                                 echo "";
@@ -135,7 +159,7 @@ use phpcmx\ORM\Tool\OrmTool;
         </table>
     </div>
 </div>
-
+</form>
 <script>
     $("#toggleMoreInfo").click(function(){
         $('.moreInfo').toggleClass('hidden');

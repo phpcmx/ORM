@@ -187,6 +187,14 @@ class OrmTool
             return;
         }
 
+        if(isset($_POST['table']) and is_array($_POST['table'])){
+            foreach ($_POST['table'] as $index => $table) {
+                self::makeField($dbAliasName, $table);
+            }
+
+            header("location:" . self::url('modelList'));
+        }
+
         // 找到所有的表列表
         $sqlResult = DB::query()
             ->sql($dbAliasName)

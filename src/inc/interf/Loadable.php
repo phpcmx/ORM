@@ -6,7 +6,7 @@
  * Time: 16:02
  */
 
-namespace phpcmx\orm\inc\interf;
+namespace phpcmx\ORM\inc\interf;
 
 
 /**
