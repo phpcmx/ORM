@@ -411,6 +411,12 @@ class OrmTool
             '{className}' => $className,
             '{dbAliaName}' => $dbAliaName,
             '{DDL}' => $ddl,
+            '{primary}' =>
+                "[\r\n            ".
+                implode(",\r\n            ", array_map(function($v){
+                    return var_export($v, 1);
+                }, $createTable->primary)).
+                "\r\n        ]",
             '{fieldLabel}' =>
                 "[\r\n".
                 implode(
@@ -440,7 +446,7 @@ class OrmTool
                 ]) ? 'string' : 'mixed'
                 )
                 );
-                return sprintf(" * @property %-6s \$%-{$fieldMaxLen}s %s(%s)", $type, $v['field'], $v['type'], $v['len']);
+                return sprintf(" * @property %-6s \$%-{$fieldMaxLen}s %s%s", $type, $v['field'], $v['type'], isset($v['len'])?"({$v['len']})":'');
             }, $createTable->fieldType)),
         ]));
     }

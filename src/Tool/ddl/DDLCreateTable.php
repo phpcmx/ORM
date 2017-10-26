@@ -14,9 +14,14 @@ define('DEFINITION',        0x4);
 define('MORE',              0x8);
 define('END',               0x10);
 
-define('FIELD_FIELD',       0x100);
-define('FIELD_TYPE',        0x200);
-define('FIELD_ATTR',        0x400);
+define('FIELD_FIELD',        0x100);
+define('FIELD_TYPE',         0x200);
+define('FIELD_ATTR',         0x400);
+define('FIELD_PRIMARY',      0x800);
+define('FIELD_UNIQUE',      0x1000);
+define('FIELD_KEY',         0x2000);
+define('FIELD_INDEX',       0x4000);
+define('FIELD',             FIELD_FIELD | FIELD_TYPE | FIELD_ATTR | FIELD_PRIMARY | FIELD_UNIQUE | FIELD_KEY | FIELD_INDEX);
 
 /**
  * Class DDLCreateTable
@@ -31,6 +36,9 @@ class DDLCreateTable extends DDLAbstract
 
     public $fieldType = [];
     public $fieldAttr = [];
+
+    public $primary=[];
+
 
     protected function parseStart()
     {
@@ -87,13 +95,15 @@ class DDLCreateTable extends DDLAbstract
                     if($keyword == '('){
                         $this->fieldType[$field]['len'] = $this->stringEnd(')');
 
-                        $status = $status & ~(FIELD_FIELD | FIELD_TYPE | FIELD_ATTR) | FIELD_ATTR;
-                    }else
+                        $status = $status & ~(FIELD) | FIELD_ATTR;
+                    }elseif(!isset($this->fieldType[$field]['type']))
                         $this->fieldType[$field]['type'] = $keyword;
+                    else
+                        $status = $status & ~(FIELD) | FIELD_ATTR;
                 }elseif($status & FIELD_ATTR){
                     if($keyword == ','){
                         $field = '';
-                        $status = $status & ~(FIELD_FIELD | FIELD_TYPE | FIELD_ATTR) | FIELD_FIELD;
+                        $status = $status & ~(FIELD) | FIELD_FIELD;
                     }else{
                         if(strpos("\'\"", $keyword)!==false){
                             $this->fieldAttr[$field][] = $this->stringEnd($keyword);
@@ -101,19 +111,45 @@ class DDLCreateTable extends DDLAbstract
                             $this->fieldAttr[$field][] = $keyword;
                         }
                     }
+                }elseif($status & FIELD_PRIMARY){
+                    if($keyword == '('){
+                        $primary = trim($this->stringEnd(')'), '``');
+                        $this->primary = array_map(function($v){return trim($v, '` ');},explode(',', $primary));
+                    }elseif($keyword == ','){
+                        $status = $status & ~FIELD | FIELD_FIELD;
+                    }
+
+                }elseif($status & FIELD_UNIQUE){
+                    if($keyword == ','){
+                        $status = $status & ~FIELD | FIELD_FIELD;
+                    }
+                }elseif($status & FIELD_KEY){
+                    if($keyword == ','){
+                        $status = $status & ~FIELD | FIELD_FIELD;
+                    }
                 } else{
                     if($keyword == ')'){
                         $status = $status ^ $statusList[$statusList[0]] | $statusList[++$statusList[0]];
                     }
-                    if ($keyword == '`') {
-                        $field = $this->fields[] = $this->stringEnd($keyword);
-                    } else {
-                        $field = $this->fields[] = $keyword;
-                    }
-                    $this->fieldType[$field]['field'] = $field;
-                    $this->fieldAttr[$field] = [];
+                    if($keyword == 'PRIMARY') {
+                        $status = $status & ~(FIELD) | FIELD_PRIMARY;
+                    }elseif($keyword == 'UNIQUE'){
+                        $status = $status & ~(FIELD) | FIELD_UNIQUE;
+                    }elseif($keyword == 'KEY') {
+                        $status = $status & ~(FIELD) | FIELD_KEY;
+                    }elseif($keyword == 'INDEX'){
+                        $status = $status & ~(FIELD) | FIELD_INDEX;
+                    }else {
+                        if($keyword == '`'){
+                            $field = $this->fields[] = $this->stringEnd('`');
+                        }else{
+                            $field = $this->fields[] = $keyword;
+                        }
+                        $this->fieldType[$field]['field'] = $field;
+                        $this->fieldAttr[$field] = [];
 
-                    $status = $status & ~(FIELD_FIELD | FIELD_TYPE | FIELD_ATTR) | FIELD_TYPE;
+                        $status = $status & ~(FIELD) | FIELD_TYPE;
+                    }
                 }
 
 

@@ -17,12 +17,5 @@ namespace phpcmx\ORM\inc\interf;
  */
 interface Loadable
 {
-    /**
-     * 加载单条数据库数据
-     * @param array $array
-     *
-     * @return void
-     */
-    public function load(array $array);
 
 }
