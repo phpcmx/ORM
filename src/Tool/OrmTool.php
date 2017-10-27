@@ -410,6 +410,7 @@ class OrmTool
             '{namespace}' => self::config()->modelNamespace,
             '{className}' => $className,
             '{dbAliaName}' => $dbAliaName,
+            '{tableName}' => $tableName,
             '{DDL}' => $ddl,
             '{primary}' =>
                 "[\r\n            ".

@@ -6,6 +6,7 @@
  */
 
 namespace phpcmx\ORM\syntactic;
+use phpcmx\ORM\entity\DataAdapter;
 
 
 /**
@@ -76,7 +77,7 @@ abstract class BaseDb implements InterfaceDb
     /**
      * 最终执行
      *
-     * @return mixed
+     * @return int | DataAdapter | static[]
      */
     public function execute(){
         $this->checkRequire();

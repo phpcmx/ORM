@@ -11,9 +11,9 @@ namespace phpcmx\ORM\syntactic;
 use phpcmx\ORM\behavior\DbBehavior;
 use phpcmx\ORM\DB;
 use phpcmx\ORM\DBConfig;
-use phpcmx\orm\entity\DataAdapter;
+use phpcmx\ORM\entity\DataAdapter;
 use phpcmx\ORM\exception\LackOfOperation;
-use phpcmx\orm\inc\interf\Loadable;
+use phpcmx\ORM\inc\interf\Loadable;
 
 class SelectDb extends BaseDb
 {
@@ -169,6 +169,7 @@ class SelectDb extends BaseDb
 
     /**
      * 生成并运行sql语句
+     * @return DataAdapter | static[]
      */
     protected function sqlExecute()
     {
@@ -182,13 +183,12 @@ class SelectDb extends BaseDb
             $this->_sqlValue,
             $this->_mode);
 
-        if($this->_loader instanceof Loadable){
+        if(is_subclass_of($this->_loader, Loadable::class)){
             $return = new DataAdapter();
             $loader = $this->_loader;
             foreach ($result as $index => $item) {
                 /** @var Loadable $_tmp */
-                $_tmp = new $loader();
-                $_tmp->load($item);
+                $_tmp = $loader::load($item);
                 $return[] = $_tmp;
             }
         }else{
@@ -228,18 +228,19 @@ class SelectDb extends BaseDb
     /**
      * 设置获取模式
      *
-     * @param int | Loadable $DB_MODE
+     * @param int | Loadable $DB_MODE_or_Loadable
      *
      * @return $this
      */
-    public function returnAs($DB_MODE = null){
+    public function returnAs($DB_MODE_or_Loadable = null){
         // 如果是配置的可加载的类
-        if($DB_MODE instanceof Loadable){
-            $this->_loader = $DB_MODE;
+        if(class_exists($DB_MODE_or_Loadable) and is_subclass_of($DB_MODE_or_Loadable, Loadable::class)){
+            $this->_loader = $DB_MODE_or_Loadable;
+            return $this;
         }
 
         // 如果是配置选项 DB::MODE_BOTH
-        if ($DB_MODE) $this->_mode = $DB_MODE;
+        if (!empty($DB_MODE_or_Loadable) and is_numeric($DB_MODE_or_Loadable)) $this->_mode = $DB_MODE_or_Loadable;
 
         return $this;
     }

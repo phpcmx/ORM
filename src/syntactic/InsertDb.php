@@ -32,7 +32,7 @@ class InsertDb extends BaseDb
      *
      * @return $this
      */
-    public function one($data){
+    public function one(array $data){
         foreach ($data as $field => $value) {
             $this->_field[] = $field;
             $this->_values[] = $value;
@@ -45,7 +45,7 @@ class InsertDb extends BaseDb
     /**
      * 生成sql并运行返回结果
      *
-     * @return mixed
+     * @return int
      */
     protected function sqlExecute()
     {

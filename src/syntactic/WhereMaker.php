@@ -92,7 +92,7 @@ class WhereMaker
             }
 
             return "{$key} {$operation} {$_value}";
-        }elseif(is_numeric($key)){
+        }elseif(is_int($key)){
             // 如果key是数字，那就直接返回字符串
             return $value;
         }else{
@@ -108,7 +108,7 @@ class WhereMaker
      * @param $value
      * @return int|string
      */
-    public function parseValue($value){
+    protected function parseValue($value){
         // 对value进行处理
         // 如果是纯数字或者函数，就不处理
         if(is_numeric($value) || DBConfig::getInstance()->isKeep($value)){

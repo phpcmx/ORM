@@ -17,5 +17,12 @@ namespace phpcmx\ORM\inc\interf;
  */
 interface Loadable
 {
-
+    /**
+     * 更新数据到当前类内
+     *
+     * @param array $array
+     *
+     * @return static
+     */
+    public static function load(array $array);
 }

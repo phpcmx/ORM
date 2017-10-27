@@ -29,6 +29,12 @@ class {className} extends TableEntity{
     }
 
 
+    public static function tableName(): string
+    {
+        return '{tableName}';
+    }
+
+
     /**
      * 字段列表（带描述）
      *

@@ -6,7 +6,7 @@
  * Time: 16:15
  */
 
-namespace phpcmx\orm\entity;
+namespace phpcmx\ORM\entity;
 
 
 /**
@@ -17,7 +17,15 @@ namespace phpcmx\orm\entity;
  */
 class DataAdapter implements \ArrayAccess
 {
-    private $_dataList = [];
+    ////////////////////////////////////////////////////////////////////////////
+    /// 数组方式操作
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * 数据存储
+     * @var array
+     */
+    private $__dataList = [];
 
     /**
      * Whether a offset exists
@@ -36,7 +44,7 @@ class DataAdapter implements \ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return isset($this->_dataList[$offset]);
+        return isset($this->__dataList[$offset]);
     }
 
     /**
@@ -53,7 +61,7 @@ class DataAdapter implements \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return $this->_dataList[$offset];
+        return $this->__dataList[$offset];
     }
 
     /**
@@ -73,10 +81,11 @@ class DataAdapter implements \ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        if(!$this->offsetExists($offset)){
-            throw new \DomainException('未知下标：'.$offset);
+        if($offset === null){
+            $this->__dataList[] = $value;
+        }else{
+            $this->__dataList[$offset] = $value;
         }
-        $this->_dataList[$offset] = $value;
     }
 
     /**
@@ -93,5 +102,42 @@ class DataAdapter implements \ArrayAccess
      */
     public function offsetUnset($offset) {
         throw new \LogicException('不允许操作');
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// 数据操作
+    ////////////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * 游标
+     * @var int
+     */
+    private $cursor = 0;
+
+
+    /**
+     * 获取下一个元素
+     * @param null|int $cursor 设置游标
+     *
+     * @return false|mixed
+     */
+    public function next(int $cursor = null)
+    {
+        if($cursor!==null){
+            $this->cursor = $cursor;
+        }
+
+        return $this->__dataList[$this->cursor++] ?? false;
+    }
+
+
+    /**
+     * 重置游标
+     */
+    public function reset()
+    {
+        $this->cursor = 0;
     }
 }

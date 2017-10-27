@@ -39,7 +39,7 @@ class DeleteDb extends BaseDb
     /**
      * 生成sql并运行返回结果
      *
-     * @return mixed
+     * @return int
      */
     protected function sqlExecute()
     {
