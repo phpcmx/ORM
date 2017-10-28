@@ -27,7 +27,9 @@ class SelectDb extends BaseDb
 
     private $_limit = null;
 
-    private $_mode = \PDO::FETCH_ASSOC;
+    private $_mode = DB::MODE_KEY;
+
+    private $_adapter = null;
 
     /**
      * @var Loadable
@@ -177,33 +179,31 @@ class SelectDb extends BaseDb
         $this->makeSqlStr();
 
         // 查询
-        $result = DbBehavior::getInstance()->select(
+        $result = DbBehavior::getInstance()->queryNeedFetch(
             DBConfig::getInstance()->getDbLinkCache($this->dbAliasName),
             $this->_sqlStr,
             $this->_sqlValue,
-            $this->_mode);
+            is_null($this->_loader) ? $this->_mode : DB::MODE_KEY);
 
+        $dataAdapter = is_null($this->_adapter) ? []: new $this->_adapter();
         if(is_subclass_of($this->_loader, Loadable::class)){
-            $return = new DataAdapter();
             $loader = $this->_loader;
             foreach ($result as $index => $item) {
                 /** @var Loadable $_tmp */
                 $_tmp = $loader::load($item);
-                $return[] = $_tmp;
+                $dataAdapter[] = $_tmp;
             }
         }else{
-            $return = $result;
+            $dataAdapter = $result;
         }
 
         // 返回结果
-        return $return;
+        return $dataAdapter;
     }
 
 
     /**
      * 生成sql语句
-     *
-     * @return string
      */
     private function makeSqlStr()
     {
@@ -228,7 +228,7 @@ class SelectDb extends BaseDb
     /**
      * 设置获取模式
      *
-     * @param int | Loadable $DB_MODE_or_Loadable
+     * @param int | Loadable $DB_MODE_or_Loadable DB::MODE_xxx
      *
      * @return SelectDb
      */
@@ -241,6 +241,22 @@ class SelectDb extends BaseDb
 
         // 如果是配置选项 DB::MODE_BOTH
         if (!empty($DB_MODE_or_Loadable) and is_numeric($DB_MODE_or_Loadable)) $this->_mode = $DB_MODE_or_Loadable;
+
+        return $this;
+    }
+
+
+    /**
+     * 设置容器
+     *
+     * @param string $dataAdapter 必须是 Array
+     *
+     * @return SelectDb
+     */
+    public function adapter($dataAdapter)
+    {
+        if(is_subclass_of($dataAdapter, \ArrayAccess::class))
+            $this->_adapter = $dataAdapter;
 
         return $this;
     }

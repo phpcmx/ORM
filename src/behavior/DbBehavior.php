@@ -23,18 +23,25 @@ class DbBehavior
     use FinalSingleEngine;
 
     /**
+     * @var bool 是否开启debug
+     */
+    public $debug = false;
+
+    public $debugInfo = null;
+
+    /**
      * 连接数据库
      *
-     * @param $type
-     * @param $host
-     * @param $dbName
-     * @param $charset
-     * @param $userName
-     * @param $password
+     * @param string $type
+     * @param string $host
+     * @param string $dbName
+     * @param string $charset
+     * @param string $userName
+     * @param string $password
      *
      * @return PDO
      */
-    public function createDbLink($type, $host, $dbName, $charset, $userName, $password) : PDO
+    public function createDbLink(string $type,string $host,string $dbName,string $charset,string $userName,string $password) : PDO
     {
 
         // 生成连接数据
@@ -46,15 +53,15 @@ class DbBehavior
 
 
     /**
-     * 执行select语句
+     * 执行需要返回数据的sql语句
      *
      * @param PDO $db
-     * @param     $sqlStr
-     * @param $valueList
-     * @param     $mode
-     * @return array|false
+     * @param string $sqlStr sql语句
+     * @param array $valueList 参数列表
+     * @param int $mode 返回模式
+     * @return array
      */
-    public function select(PDO $db, string $sqlStr, array $valueList, int $mode)
+    public function queryNeedFetch(PDO $db, string $sqlStr, array $valueList, int $mode)
     {
         // 执行
         $sql = $db->prepare($sqlStr);
@@ -68,6 +75,9 @@ class DbBehavior
         $sql->setFetchMode($mode);;
 
         $result = $sql->fetchAll();
+
+        // debug info
+        $this->debug and $this->debugInfo = $sql->debugDumpParams();
 
         $sql->closeCursor();
 
@@ -84,7 +94,7 @@ class DbBehavior
      *
      * @return int
      */
-    public function insert(PDO $db, $sqlStr, $valueList)
+    public function queryReturnInsertId(PDO $db,string $sqlStr,array $valueList)
     {
         // 执行
         $sql = $db->prepare($sqlStr);
@@ -93,6 +103,9 @@ class DbBehavior
         if(!$sql->execute($valueList)){
             throw new ExecuteWasFailed(json_encode($sql->errorInfo()));
         }
+
+        // debug info
+        $this->debug and $this->debugInfo = $sql->debugDumpParams();
 
         $sql->closeCursor();
 
@@ -102,7 +115,7 @@ class DbBehavior
 
 
     /**
-     * 更新
+     * 返回影响行数
      *
      * @param PDO $db
      * @param     $sqlStr
@@ -110,7 +123,7 @@ class DbBehavior
      *
      * @return bool|int
      */
-    public function update(PDO $db, $sqlStr, $valueList)
+    public function queryReturnRowCount(PDO $db, $sqlStr, $valueList)
     {
         // 执行
         $sql = $db->prepare($sqlStr);
@@ -119,6 +132,9 @@ class DbBehavior
         if(!$sql->execute($valueList)){
             throw new ExecuteWasFailed(json_encode($sql->errorInfo()));
         }
+
+        // debug info
+        $this->debug and $this->debugInfo = $sql->debugDumpParams();
 
         $sql->closeCursor();
 
@@ -127,43 +143,20 @@ class DbBehavior
     }
 
 
-    /**
-     * @param PDO $db
-     * @param     $sqlStr
-     *
-     * @param $valueList
-     * @return bool|int
-     */
-    public function delete(PDO $db, $sqlStr, $valueList)
-    {
-        // 执行
-        $sql = $db->prepare($sqlStr);
-
-        // 执行
-        if(!$sql->execute($valueList)){
-            throw new ExecuteWasFailed(json_encode($sql->errorInfo()));
-        }
-
-        $sql->closeCursor();
-
-        return $sql->rowCount();
-    }
-
-
-    /**
-     * 执行sql语句
-     *
-     * @param PDO $db
-     * @param     $sqlStr
-     *
-     * @return null|\PDOStatement|false
-     */
-    public function query(PDO $db, $sqlStr)
-    {
-//        $sql = null;
-        $sql = $db->query($sqlStr);
-
-        return $sql;
-    }
+//    /**
+//     * 执行sql语句
+//     *
+//     * @param PDO $db
+//     * @param     $sqlStr
+//     *
+//     * @return null|\PDOStatement|false
+//     */
+//    public function queryReturnPDOStatement(PDO $db, $sqlStr)
+//    {
+////        $sql = null;
+//        $sql = $db->query($sqlStr);
+//
+//        return $sql;
+//    }
 
 }

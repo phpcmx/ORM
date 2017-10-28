@@ -157,11 +157,12 @@ abstract class TableEntity implements Loadable
      * 　　->limit(5)  // ->limit([0,20])
      * 　　->execute();
      *
-     * @return SelectDb|static
+     * @return SelectDb
      */
     public static function select()
     {
         return DB::query()->select(static::dbAliaName(), static::tableName())
+            ->adapter(DataAdapter::class)
             ->returnAs(static::class);
     }
 
@@ -210,14 +211,14 @@ abstract class TableEntity implements Loadable
      */
     public static function count($where)
     {
-        $dataAdapter = DB::query()->select(static::dbAliaName(), static::tableName())
+        $info = DB::query()->select(static::dbAliaName(), static::tableName())
             ->returnAs(DB::MODE_KEY)
             ->field('count(*) cnt')
             ->where($where)
             ->execute();
 
-        if($info = $dataAdapter->next(0)){
-            return $info['cnt'];
+        if($info and isset($info[0])){
+            return $info[0]['cnt'];
         }
 
         return false;

@@ -82,4 +82,20 @@ final class DB
     {
         return dirname(__DIR__);
     }
+
+
+    /**
+     * debug的跟踪模式 获取信息，请无参请求
+     * @var null
+     */
+    static $trace = null;
+
+    public static function trace($type=null, $id=null, $info=null)
+    {
+        if($type === null){
+            return self::$trace;
+        }
+
+        self::$trace[$type][$id] = $info;
+    }
 }

@@ -9,6 +9,7 @@ namespace phpcmx\ORM\syntactic;
 
 
 use phpcmx\ORM\behavior\DbBehavior;
+use phpcmx\ORM\DB;
 use phpcmx\ORM\DBConfig;
 use phpcmx\ORM\exception\LackOfOperation;
 
@@ -33,11 +34,6 @@ class Sql extends BaseDb
 
         $dbLink = DBConfig::getInstance()->getDbLinkCache($this->dbAliasName);
 
-        $pdoStatement = DbBehavior::getInstance()->query(
-            $dbLink,
-            $this->_sqlStr
-        );
-
         // 判断是哪种操作
         $index = strpos(trim($this->_sqlStr), ' ' );
         if($index === false){
@@ -46,14 +42,14 @@ class Sql extends BaseDb
         switch(strtoupper(substr(trim($this->_sqlStr), 0, $index))){
             case 'SHOW':
             case 'SELECT':
-                $return = $pdoStatement->fetchAll();
+                $return = DbBehavior::getInstance()->queryNeedFetch($dbLink, $this->_sqlStr, [], DB::MODE_KEY);
                 break;
             case 'INSERT':
-                $return = $dbLink->lastInsertId();
+                $return = DbBehavior::getInstance()->queryReturnInsertId($dbLink, $this->_sqlStr, []);
                 break;
             case 'UPDATE':
             case 'DELETE':
-                $return  = $pdoStatement->rowCount();
+                $return = DbBehavior::getInstance()->queryReturnRowCount($dbLink, $this->_sqlStr, []);
                 break;
             default:
                 $return = false;

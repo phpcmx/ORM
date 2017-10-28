@@ -77,4 +77,14 @@ final class OrmApp
     {
 
     }
+
+
+    /**
+     * 开启debug模式，会有额外数据进行计算，会影响效率的啊
+     * 但是作为额外的优势，能看到sql语句的执行详情
+     */
+    public function debug()
+    {
+        DB::config()->debug = true;
+    }
 }

@@ -27,6 +27,13 @@ final class DBConfig
     const CHARSET_UTF8 = 'utf8';
     const CHARSET_GBK = 'gbk';
 
+
+    /**
+     * 是否开始debug模式
+     * @var bool
+     */
+    public $debug = false;
+
     /**
      * @var array 数据库的连接配置
      */

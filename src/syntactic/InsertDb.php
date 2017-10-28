@@ -53,7 +53,7 @@ class InsertDb extends BaseDb
         $this->makeSqlValue();
 
         // 插入
-        $code = DbBehavior::getInstance()->insert(
+        $code = DbBehavior::getInstance()->queryReturnInsertId(
             DBConfig::getInstance()->getDbLinkCache($this->dbAliasName),
             $this->_sqlStr,
             $this->_sqlValue

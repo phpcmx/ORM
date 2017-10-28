@@ -6,6 +6,9 @@
  */
 
 namespace phpcmx\ORM\syntactic;
+use phpcmx\ORM\behavior\DbBehavior;
+use phpcmx\ORM\DB;
+use phpcmx\ORM\DBConfig;
 use phpcmx\ORM\entity\DataAdapter;
 
 
@@ -35,6 +38,16 @@ abstract class BaseDb implements InterfaceDb
      * @var string 当前操作表名
      */
     protected $_tableName = null;
+
+    /**
+     * @var null|callable 执行前回调
+     */
+    protected $_hookBeforeExecute = null;
+
+    /**
+     * @var null|callable 执行后回调
+     */
+    protected $_hookAfterExecute = null;
 
     /**
      * BaseDb constructor.
@@ -68,10 +81,33 @@ abstract class BaseDb implements InterfaceDb
 
 
     /**
+     * hookBeforeExecute
      * 检查必须要操作的流程
      * @return void
      */
     abstract protected function checkRequire();
+
+
+    /**
+     * hook 在执行前
+     *
+     * @param callable $fun
+     */
+    public function beforeExecute(callable $fun)
+    {
+        $this->_hookBeforeExecute = $fun;
+    }
+
+
+    /**
+     * hook 在执行之后
+     *
+     * @param callable $fun
+     */
+    public function afterExecute(callable $fun)
+    {
+        $this->_hookAfterExecute = $fun;
+    }
 
 
     /**
@@ -80,7 +116,30 @@ abstract class BaseDb implements InterfaceDb
      * @return int | DataAdapter | static[]
      */
     public function execute(){
+        // 检查必须
         $this->checkRequire();
-        return $this->sqlExecute();
+
+        // 执行前的钩子
+        is_callable($this->_hookBeforeExecute) and ($this->_hookBeforeExecute)($this);
+
+        if(DB::config()->debug){
+            DbBehavior::getInstance()->debug = true;
+            $time = microtime(1);
+
+            $return = $this->sqlExecute();
+
+            $executeTime = microtime(1) - $time;
+            DB::trace('sql', $this->_sqlStr, [
+                'dumpInfo' => DbBehavior::getInstance()->debugInfo,
+                'executeTime' => $executeTime,
+            ]);
+        }else{
+            $return  = $this->sqlExecute();
+        }
+
+        // 执行后的钩子
+        is_callable($this->_hookAfterExecute) and ($this->_hookAfterExecute)($this);
+
+        return $return;
     }
 }
