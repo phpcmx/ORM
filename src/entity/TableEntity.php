@@ -202,6 +202,29 @@ abstract class TableEntity implements Loadable
 
 
     /**
+     * 获取count
+     *
+     * @param $where
+     *
+     * @return bool
+     */
+    public static function count($where)
+    {
+        $dataAdapter = DB::query()->select(static::dbAliaName(), static::tableName())
+            ->returnAs(DB::MODE_KEY)
+            ->field('count(*) cnt')
+            ->where($where)
+            ->execute();
+
+        if($info = $dataAdapter->next(0)){
+            return $info['cnt'];
+        }
+
+        return false;
+    }
+
+
+    /**
      * 添加
      *
      * eq.

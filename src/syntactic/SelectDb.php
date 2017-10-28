@@ -39,7 +39,7 @@ class SelectDb extends BaseDb
      * 设置要查询的列表
      *
      * @param array ...$list
-     * @return $this
+     * @return SelectDb
      */
     public function field(...$list)
     {
@@ -78,7 +78,7 @@ class SelectDb extends BaseDb
      * 添加条件
      *
      * @param $where
-     * @return $this
+     * @return SelectDb
      */
     public function andWhere($where){
         if(is_string($where)){
@@ -95,7 +95,7 @@ class SelectDb extends BaseDb
      * 设置group分组
      *
      * @param string $group
-     * @return $this
+     * @return SelectDb
      */
     public function groupBy($group){
         $this->_group = $group;
@@ -108,7 +108,7 @@ class SelectDb extends BaseDb
      * 设置order条件
      *
      * @param string | array $order
-     * @return $this
+     * @return SelectDb
      */
     public function orderBy($order)
     {
@@ -134,7 +134,7 @@ class SelectDb extends BaseDb
      * 设置limit参数
      *
      * @param null $limit
-     * @return $this
+     * @return SelectDb
      */
     public function limit($limit)
     {
@@ -230,7 +230,7 @@ class SelectDb extends BaseDb
      *
      * @param int | Loadable $DB_MODE_or_Loadable
      *
-     * @return $this
+     * @return SelectDb
      */
     public function returnAs($DB_MODE_or_Loadable = null){
         // 如果是配置的可加载的类
