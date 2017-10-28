@@ -13,6 +13,7 @@ namespace phpcmx\ORM;
 
 
 use phpcmx\ORM\inc\traits\FinalSingleEngine;
+use phpcmx\ORM\Tool\OrmTool;
 
 /**
  * Class OrmApp
@@ -24,9 +25,56 @@ final class OrmApp
     use FinalSingleEngine;
 
 
+    /**
+     * 版本
+     */
     const VERSION = 'v1.0.0';
 
-    public function run(){
+
+    /**
+     * 在入口文件添加数据库配置
+     *
+     * eg.
+     * OrmApp::run1_addConfig([
+     * 　　'dbAliaName' => [
+     * 　　　　'host' => '127.0.0.1',
+     * 　　　　'dbName' => 'userdb',
+     * 　　　　'userName' => 'root',
+     * 　　　　'password' => 'root',
+     * 　　　　'charset' => 'utf8',
+     * 　　],
+     * ]);
+     *
+     * @param array $config
+     */
+    public function run1_addConfig(array $config){
+        foreach ($config as $dbAliaName => $item) {
+            DB::config()->addDbConfig(
+                $dbAliaName,
+                $item['host'],
+                $item['dbName'],
+                $item['userName'],
+                $item['password'],
+                $item['charset']??DBConfig::CHARSET_UTF8
+            );
+        }
+    }
+
+
+    /**
+     * 在controller调用此方法，进入model自动生成后台
+     */
+    public function run2_modelMaker()
+    {
+        OrmTool::action();
+    }
+
+
+    /**
+     * 没有第三步，嘿，只需要在控制器调用就可以了
+     */
+    public function run3_use()
+    {
 
     }
 }

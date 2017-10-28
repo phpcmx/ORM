@@ -29,6 +29,11 @@ class {className} extends TableEntity{
     }
 
 
+    /**
+     * 数据库表名
+     *
+     * @return string
+     */
     public static function tableName(): string
     {
         return '{tableName}';
