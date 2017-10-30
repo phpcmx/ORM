@@ -243,11 +243,11 @@ class OrmTool
             [
                 'title'            => 'model默认配置',
                 'defaultDir'       => self::config()->modelPath ?: DBConfig::filePathReplace(
-                    '{phpcmx}' . DIRECTORY_SEPARATOR . 'orm'
+                    '{phpcmx}' . DIRECTORY_SEPARATOR . 'orm '
                     . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR
                     . 'model'
                 ),
-                'defaultNamespace' => self::config()->modelNamespace,
+                'defaultNamespace' => self::config()->modelNamespace ?: "phpcmx\\ORM\\model",
             ]
         );
         self::display();
