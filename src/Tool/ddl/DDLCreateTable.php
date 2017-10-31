@@ -92,14 +92,12 @@ class DDLCreateTable extends DDLAbstract
                 }
 
                 if($status & FIELD_TYPE){
-                    if($keyword == '('){
+                    $this->fieldType[$field]['type'] = $keyword;
+                    if($this->nextIs('(')){
+                        $this->next();
                         $this->fieldType[$field]['len'] = $this->stringEnd(')');
-
-                        $status = $status & ~(FIELD) | FIELD_ATTR;
-                    }elseif(!isset($this->fieldType[$field]['type']))
-                        $this->fieldType[$field]['type'] = $keyword;
-                    else
-                        $status = $status & ~(FIELD) | FIELD_ATTR;
+                    }
+                    $status = $status & ~(FIELD) | FIELD_ATTR;
                 }elseif($status & FIELD_ATTR){
                     if($keyword == ','){
                         $field = '';

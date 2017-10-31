@@ -106,6 +106,22 @@ abstract class DDLAbstract implements DDLInterf
 
 
     /**
+     * 判断下一个字符是不是参数
+     * @param $string
+     *
+     * @return bool
+     */
+    public function nextIs($string)
+    {
+        $cursor = $this->__cursor;
+        $next = $this->next();
+        $this->__cursor = $cursor;
+
+        return $string == $next;
+    }
+
+
+    /**
      * @param $endFlag
      *
      * @return bool|string
