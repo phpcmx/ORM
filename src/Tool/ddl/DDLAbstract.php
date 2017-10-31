@@ -42,7 +42,7 @@ abstract class DDLAbstract implements DDLInterf
     private $__special = [
         'split' => ' 
 ',
-        'special' => '\`\"\'(){}[];',
+        'special' => '\`\"\'(){}[];,',
     ];
 
     /**
