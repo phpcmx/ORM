@@ -140,4 +140,16 @@ class DataAdapter implements \ArrayAccess
     {
         $this->cursor = 0;
     }
+
+
+    /**
+     * 遍历获取方法
+     * @return \Generator
+     */
+    public function yieldEach()
+    {
+        foreach ($this->__dataList as $index => $item) {
+            yield $this->__dataList[$index];
+        }
+    }
 }
