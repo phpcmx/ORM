@@ -43,8 +43,6 @@ class DeleteDb extends BaseDb
      */
     protected function sqlExecute()
     {
-        $this->makeSqlStr();
-
         $code = DbBehavior::getInstance()->queryReturnRowCount(
             DBConfig::getInstance()->getDbLinkCache($this->dbAliasName),
             $this->_sqlStr,
@@ -59,7 +57,7 @@ class DeleteDb extends BaseDb
     /**
      * 生成sql语句
      */
-    private function makeSqlStr()
+    protected function makeSqlStr()
     {
         $this->_sqlStr = "DELETE FROM {$this->_tableName} WHERE {$this->_where}";
     }

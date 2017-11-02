@@ -23,13 +23,6 @@ class DbBehavior
     use FinalSingleEngine;
 
     /**
-     * @var bool 是否开启debug
-     */
-    public $debug = false;
-
-    public $debugInfo = null;
-
-    /**
      * 连接数据库
      *
      * @param string $type
@@ -76,9 +69,6 @@ class DbBehavior
 
         $result = $sql->fetchAll();
 
-        // debug info
-        $this->debug and $this->debugInfo = $sql->debugDumpParams();
-
         $sql->closeCursor();
 
         return $result;
@@ -103,9 +93,6 @@ class DbBehavior
         if(!$sql->execute($valueList)){
             throw new ExecuteWasFailed(json_encode($sql->errorInfo()));
         }
-
-        // debug info
-        $this->debug and $this->debugInfo = $sql->debugDumpParams();
 
         $sql->closeCursor();
 
@@ -132,9 +119,6 @@ class DbBehavior
         if(!$sql->execute($valueList)){
             throw new ExecuteWasFailed(json_encode($sql->errorInfo()));
         }
-
-        // debug info
-        $this->debug and $this->debugInfo = $sql->debugDumpParams();
 
         $sql->closeCursor();
 

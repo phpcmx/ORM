@@ -64,7 +64,6 @@ class UpdateDb extends BaseDb
      */
     protected function sqlExecute()
     {
-        $this->makeSqlStr();
         $this->makeSqlValue();
 
         $row = DbBehavior::getInstance()->queryReturnRowCount(
@@ -79,7 +78,7 @@ class UpdateDb extends BaseDb
     /**
      * 生成sql语句
      */
-    private function makeSqlStr()
+    protected function makeSqlStr()
     {
         // 如果对应的值是标量直接写入，如果是array，就写入0元素
         $_field = array_map(function($k, $v){

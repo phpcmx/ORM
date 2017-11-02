@@ -68,4 +68,13 @@ class Sql extends BaseDb
             throw new LackOfOperation('未设置sql语句');
         }
     }
+
+    /**
+     * 生成sql语句
+     *
+     * @return mixed
+     */
+    protected function makeSqlStr(){
+        return null;
+    }
 }

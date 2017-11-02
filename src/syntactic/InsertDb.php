@@ -49,7 +49,6 @@ class InsertDb extends BaseDb
      */
     protected function sqlExecute()
     {
-        $this->makeSqlStr();
         $this->makeSqlValue();
 
         // 插入
@@ -66,7 +65,7 @@ class InsertDb extends BaseDb
     /**
      * 生成sql语句
      */
-    private function makeSqlStr()
+    protected function makeSqlStr()
     {
         // 做成逗号分割的字符串
         $field = implode(',', $this->_field);

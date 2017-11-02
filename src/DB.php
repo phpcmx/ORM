@@ -88,14 +88,17 @@ final class DB
      * debug的跟踪模式 获取信息，请无参请求
      * @var null
      */
-    static $trace = null;
+    private static $trace = null;
 
     public static function trace($type=null, $id=null, $info=null)
     {
         if($type === null){
             return self::$trace;
+        }elseif(!isset(self::$trace[$type])){
+            self::$trace[$type] = [];
         }
 
-        self::$trace[$type][$id] = $info;
+        self::$trace[$type][$id] = array_merge(self::$trace[$type][$id]??[], $info);
+        return null;
     }
 }

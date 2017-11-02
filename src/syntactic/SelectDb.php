@@ -175,9 +175,6 @@ class SelectDb extends BaseDb
      */
     protected function sqlExecute()
     {
-        // 生成语句
-        $this->makeSqlStr();
-
         // 查询
         $result = DbBehavior::getInstance()->queryNeedFetch(
             DBConfig::getInstance()->getDbLinkCache($this->dbAliasName),
@@ -205,7 +202,7 @@ class SelectDb extends BaseDb
     /**
      * 生成sql语句
      */
-    private function makeSqlStr()
+    protected function makeSqlStr()
     {
         $sqlStr = "SELECT {$this->_field} FROM {$this->_tableName} WHERE {$this->_where}";
 

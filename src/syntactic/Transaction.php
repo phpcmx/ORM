@@ -21,7 +21,7 @@ class Transaction extends BaseDb
      */
     protected function sqlExecute()
     {
-        //  Implement sqlExecute() method.
+        return null;
     }
 
     public function beginTransaction(){
@@ -57,5 +57,14 @@ class Transaction extends BaseDb
     protected function checkRequire()
     {
         // : Implement checkRequire() method.
+    }
+
+    /**
+     * 生成sql语句
+     *
+     * @return mixed
+     */
+    protected function makeSqlStr(){
+        return null;
     }
 }

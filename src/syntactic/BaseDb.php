@@ -6,9 +6,7 @@
  */
 
 namespace phpcmx\ORM\syntactic;
-use phpcmx\ORM\behavior\DbBehavior;
 use phpcmx\ORM\DB;
-use phpcmx\ORM\DBConfig;
 use phpcmx\ORM\entity\DataAdapter;
 
 
@@ -81,6 +79,13 @@ abstract class BaseDb implements InterfaceDb
 
 
     /**
+     * 生成sql语句
+     * @return mixed
+     */
+    abstract protected function makeSqlStr();
+
+
+    /**
      * hookBeforeExecute
      * 检查必须要操作的流程
      * @return void
@@ -122,15 +127,25 @@ abstract class BaseDb implements InterfaceDb
         // 执行前的钩子
         is_callable($this->_hookBeforeExecute) and ($this->_hookBeforeExecute)($this);
 
+        // 生成语句
+        $this->makeSqlStr();
+
         if(DB::config()->debug){
-            DbBehavior::getInstance()->debug = true;
             $time = microtime(1);
+
+            $traceId = microtime(1);
+            DB::trace('sql', $traceId, [
+                'sqlStr' => $this->_sqlStr,
+                'dumpInfo' => $this->_sqlValue,
+                'executeTime' => 0,
+            ]);
 
             $return = $this->sqlExecute();
 
             $executeTime = microtime(1) - $time;
-            DB::trace('sql', $this->_sqlStr, [
-                'dumpInfo' => DbBehavior::getInstance()->debugInfo,
+            DB::trace('sql', $traceId, [
+                'sqlStr' => $this->_sqlStr,
+                'dumpInfo' => $this->_sqlValue,
                 'executeTime' => $executeTime,
             ]);
         }else{
