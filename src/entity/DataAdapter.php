@@ -152,4 +152,13 @@ class DataAdapter implements \ArrayAccess
             yield $this->__dataList[$index];
         }
     }
+
+
+    /**
+     * 获取总数据的方法
+     * @return int
+     */
+    public function count(){
+        return count($this->__dataList);
+    }
 }
