@@ -111,7 +111,7 @@ class WhereMaker
     protected function parseValue($value){
         // 对value进行处理
         // 如果是纯数字或者函数，就不处理
-        if(is_numeric($value) || DBConfig::getInstance()->isKeep($value)){
+        if(is_int($value) || DBConfig::getInstance()->isKeep($value)){
             $v = $value;
         }
         // 如果是字符串，就加单引号
