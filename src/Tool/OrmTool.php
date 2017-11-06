@@ -27,6 +27,8 @@ class OrmTool
 {
     const VERSION = 'v1.0.0';
     private static $action = 'index';
+    private static $isCli = false;
+    private static $cliParams = [];
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -38,8 +40,21 @@ class OrmTool
      */
     static function action()
     {
-        // 获取action
-        self::$action = $_GET['action'] ?? 'index';
+        // 拦截cli请求
+        if(strpos(php_sapi_name(), 'cli') !== false){
+            global $argc,$argv;
+            self::$isCli = true;
+            $action = $argv[1]??null;
+            if($argc > 1 and $action[0]!='-'){
+                self::$action = $action;
+                self::$cliParams = array_slice($argv, 2);
+            }else{
+                self::$action = 'error404';
+            }
+        }else {
+            // 获取action
+            self::$action = $_GET['action'] ?? 'index';
+        }
 
         if (!method_exists(self::class, self::$action . 'Action')) {
             self::$action = 'error404';
@@ -79,6 +94,35 @@ class OrmTool
 
 
     /**
+     * 切换cli程序
+     *
+     * @param       $action
+     * @param array $param
+     *
+     * @return null
+     */
+    public static function cliChangeAction($action, array $param = null)
+    {
+        self::$action = $action;
+        if(!is_null($param))
+            self::$cliParams = $param;
+
+        self::{(self::$action) . "Action"}();
+        return null;
+    }
+
+
+    /**
+     * 获取cli参数
+     * @return array
+     */
+    public static function getCliParams()
+    {
+        return self::$cliParams;
+    }
+
+
+    /**
      * 获取配置
      *
      * @return OrmConfig
@@ -93,12 +137,15 @@ class OrmTool
      *
      * @param string $name
      *
+     * @return null
      * @throws \Exception
      */
     private static function display($name = null)
     {
+        $tpl = self::$isCli ? 'cli' : 'page';
+
         $html_name = $name ?: self::$action;
-        $html_path = __DIR__ . "/page/{$html_name}.php";
+        $html_path = __DIR__ . "/{$tpl}/{$html_name}.php";
         if (!file_exists($html_path)) {
             throw new \Exception('未找到模板页面:' . $html_path);
         }
@@ -106,7 +153,9 @@ class OrmTool
         $params = self::assign();
         extract($params);
 
-        include __DIR__ . "/page/common/layout.php";
+        include __DIR__ . "/{$tpl}/common/layout.php";
+
+        return null;
     }
 
 
@@ -136,9 +185,11 @@ class OrmTool
      */
     private static function error404Action()
     {
+        global $argv;
         self::assign(
             [
                 'title' => '404',
+                'fileName' => $argv[0],
             ]
         );
         self::display('error404');
@@ -171,39 +222,115 @@ class OrmTool
         self::display();
     }
 
+
+    /**
+     * cli下生成model
+     */
+    private static function makeModelAction()
+    {
+        $param = self::getCliParams();
+        if(count($param) < 2){
+            self::cliChangeAction('error404');
+            return;
+        }
+
+        $dbAliaName = $param[0];
+        $tableName = $param[1];
+
+        // 默认参数
+        $modelPath = self::config()->modelPath;
+        $modelNamespace = self::config()->modelNamespace;
+        if (empty($modelPath) or empty($modelNamespace)) {
+            echo "您还没有设置默认配置，请先根据提示进行操作初始化!".PHP_EOL;
+            return self::cliChangeAction('setModelConfig');
+        }
+
+        self::makeFile($dbAliaName, $tableName);
+
+        echo "生成成功".PHP_EOL;
+        die;
+    }
+
+
+    private static function makeAllModelAction()
+    {
+        $param = self::getCliParams();
+        if(count($param) < 1){
+            self::cliChangeAction('error404');
+            return;
+        }
+
+        $dbAliaName = $param[0];
+
+        // 默认参数
+        $modelPath = self::config()->modelPath;
+        $modelNamespace = self::config()->modelNamespace;
+        if( empty($modelPath) or empty($modelNamespace)){
+            echo "您还没有设置默认配置，请先根据提示进行初始化！".PHP_EOL;
+            return self::cliChangeAction('setModelConfig');
+        }
+
+        // 找到所有的表列表
+        $sqlResult = DB::query()
+            ->sql($dbAliaName)
+            ->query('show table status')
+            ->execute();
+
+        foreach ($sqlResult as $index => $item) {
+            self::makeFile($dbAliaName, $item['Name']);
+        }
+
+        echo "生成成功".PHP_EOL;
+        die;
+    }
+
+
+
+
     /**
      * model配置页面
      *
      */
     private static function modelListAction()
     {
-        $dbAliasName = $_GET['n'] ?? null;
-        // 默认参数
-        $modelPath = self::config()->modelPath;
-        $modelNamespace = self::config()->modelNamespace;
-        if (empty($modelPath) or empty($modelNamespace)) {
-            header("location:" . self::url('setModelConfig'));
+        if(self::$isCli){
+            $dbAliaName = self::getCliParams()['dbAliaName'];
 
-            return;
-        }
+            // 默认参数
+            $modelPath = self::config()->modelPath;
+            $modelNamespace = self::config()->modelNamespace;
+            if (empty($modelPath) or empty($modelNamespace)) {
+                return self::cliChangeAction('setModelConfig');
+            }
+        }else{
+            $dbAliaName = $_GET['n'] ?? null;
+            // 默认参数
+            $modelPath = self::config()->modelPath;
+            $modelNamespace = self::config()->modelNamespace;
+            if (empty($modelPath) or empty($modelNamespace)) {
+                header("location:" . self::url('setModelConfig'));
 
-        if(isset($_POST['table']) and is_array($_POST['table'])){
-            foreach ($_POST['table'] as $index => $table) {
-                self::makeField($dbAliasName, $table);
+                return null;
             }
 
-            header("location:" . self::url('modelList'));
-        }
+            if(isset($_POST['table']) and is_array($_POST['table'])){
+                foreach ($_POST['table'] as $index => $table) {
+                    self::makeFile($dbAliaName, $table);
+                }
 
+                header("location:" . self::url('modelList'));
+            }
+
+        }
         // 找到所有的表列表
         $sqlResult = DB::query()
-            ->sql($dbAliasName)
+            ->sql($dbAliaName)
             ->query('show table status')
             ->execute();
 
         // 添加是否已经存在文件的状态
         foreach ($sqlResult as $index => $item) {
-            if(file_exists(self::makeModelFilePath($dbAliasName, $item['Name']))){
+            if(file_exists(self::makeModelFilePath($dbAliaName, $item['Name']))){
                 $sqlResult[$index]['fileStatus'] = 0;
             }else{
                 $sqlResult[$index]['fileStatus'] = 1;
@@ -212,14 +339,15 @@ class OrmTool
 
         self::assign(
             [
+                'dbAliaName' => $dbAliaName,
                 'title' => 'model生成页面',
-                'dbName' => DB::config()->getDbConfig($dbAliasName)['dbName'],
+                'dbName' => DB::config()->getDbConfig($dbAliaName)['dbName'],
                 'modelPath' => $modelPath,
                 'modelNamespace' => $modelNamespace,
                 'tableList' => $sqlResult
             ]
         );
-        self::display();
+        return self::display();
     }
 
     /**
@@ -337,7 +465,7 @@ class OrmTool
 
         // 生成model文件
         if(isset($_GET['verify'])){
-            self::makeField($dbAliaName, $tableName);
+            self::makeFile($dbAliaName, $tableName);
             header('location:'.self::url('modelList', true)."&n={$dbAliaName}");
         }
 
@@ -377,7 +505,7 @@ class OrmTool
      * @param $tableName
      *
      */
-    private static function makeField($dbAliaName, $tableName)
+    public static function makeFile($dbAliaName, $tableName)
     {
         $modelFilePath = self::makeModelFilePath($dbAliaName, $tableName, $className);
         $columns = DB::query()
@@ -556,4 +684,6 @@ ERROR_MESSAGE;
 
         return $modelPath.DIRECTORY_SEPARATOR.$className.".php";
     }
+
+
 }

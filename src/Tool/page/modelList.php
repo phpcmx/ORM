@@ -33,7 +33,7 @@ use phpcmx\ORM\Tool\OrmTool;
     <div class="col-md-12 column">
         <h2>数据库表【<?= $dbName ?>】</h2>
         <hr>
-        <button id="toggleMoreInfo" class="btn btn-success btn-lg">更多信息</button>
+        <a href="javascript:void(0);" id="toggleMoreInfo" class="btn btn-success btn-lg">更多信息</a>
         <input type="submit" class="btn btn-success pull-right" value="生成选中(无验证)">
         <table class="table table-hover table-striped">
             <caption>
