@@ -8,6 +8,8 @@
 
 namespace phpcmx\ORM;
 use PDO;
+use phpcmx\ORM\entity\TableEntity;
+use phpcmx\ORM\exception\NotTheSameDbConnection;
 use phpcmx\ORM\syntactic\Transaction;
 use phpcmx\ORM\syntactic\WhereMaker;
 
@@ -42,11 +44,27 @@ final class DB
     /**
      * 返回事务
      *
-     * @param $dbAliasName
-     *
-     * @return Transaction
+     * @param string[]|TableEntity[] $tableEntities  TableEntity 的类，把要进行事务的所有的类都写进去
+     * @return Transaction | false
+     * @throws NotTheSameDbConnection
      */
-    static function transaction($dbAliasName):Transaction{
+    static function transaction(string ...$tableEntities):Transaction{
+        if(empty($tableEntities)){
+            return false;
+        }
+        foreach ($tableEntities as $index => $tableEntity) {
+            if(!is_subclass_of($tableEntity, TableEntity::class)){
+                return false;
+            }
+        }
+
+        $dbAliasName = $tableEntities[0]::dbAliaName();
+        foreach ($tableEntities as $index => $item) {
+            if($item::dbAliaName() != $dbAliasName){
+                throw new NotTheSameDbConnection('必须是相同的别名设置:'.$dbAliasName."!=".$item::dbAliaName());
+            }
+        }
+
         return new Transaction($dbAliasName);
     }
 
