@@ -9,6 +9,7 @@
 namespace phpcmx\ORM\entity;
 
 use phpcmx\ORM\DB;
+use phpcmx\ORM\exception\LoadEntityCouldNotAdd;
 use phpcmx\ORM\inc\interf\Loadable;
 use phpcmx\ORM\syntactic\SelectDb;
 
@@ -24,35 +25,35 @@ abstract class TableEntity implements Loadable
      * 数据库连接名称（别名）
      * @return string
      */
-    abstract public static function dbAliaName() : string;
+    abstract public static function dbAliaName(): string;
 
 
     /**
      * 表名
      * @return string
      */
-    abstract public static function tableName() : string;
+    abstract public static function tableName(): string;
 
 
     /**
      * 字段列表（带描述）
      * @return array
      */
-    abstract public static function attribute() : array;
+    abstract public static function attribute(): array;
 
 
     /**
      * 数据库结构描述
      * @return string
      */
-    abstract public static function definition() : string;
+    abstract public static function definition(): string;
 
 
     /**
      * 主键列表
      * @return array
      */
-    abstract public static function primary() : array;
+    abstract public static function primary(): array;
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -66,12 +67,32 @@ abstract class TableEntity implements Loadable
     private $__fieldValue = [];
 
     /**
+     * 记录那些字段呗修改了
+     *
+     * @var array
+     */
+    private $__changedField = [];
+
+    /**
+     * 记录是否是load引入的数据
+     * 影响:load引入的数据不可以调用add方法
+     *
+     * @var bool
+     */
+    private $__isLoad = false;
+
+    /**
      * 不允许被实例化(new)
      * TableEntity constructor.
      */
-    protected function __construct(){
+    protected function __construct()
+    {
         // 初始化所有的字段
-        $this->__fieldValue = array_map(function(){ return null;}, static::attribute());
+        $this->__fieldValue = array_map(
+            function () {
+                return null;
+            }, static::attribute()
+        );
     }
 
 
@@ -86,6 +107,8 @@ abstract class TableEntity implements Loadable
     {
         $static = new static();
         $static->__resetEntity($array);
+        // 标记为load
+        $static->__isLoad = true;
         return $static;
     }
 
@@ -94,7 +117,8 @@ abstract class TableEntity implements Loadable
      * 重置内容的值
      * @param array $array
      */
-    protected function __resetEntity(array $array){
+    protected function __resetEntity(array $array)
+    {
         foreach (static::attribute() as $field => $label) {
             $this->__fieldValue[$field] = $array[$field] ?? null;
         }
@@ -108,10 +132,14 @@ abstract class TableEntity implements Loadable
      */
     public function __set($field, $value)
     {
-        if(!isset($this->__fieldValue[$field])){
-            throw new \OutOfRangeException('未找到字段：'.$field);
+        if (!array_key_exists($field, $this->__fieldValue)) {
+            throw new \OutOfRangeException('未找到字段：' . $field);
         }
 
+        // 记录修改次数
+        $this->__changedField[$field] = ($this->__changedField[$field] ?? 0)
+            + 1;
+        // 记录字段
         $this->__fieldValue[$field] = $value;
     }
 
@@ -124,11 +152,33 @@ abstract class TableEntity implements Loadable
      */
     public function __get($field)
     {
-        if(!isset($this->__fieldValue[$field])){
-            throw new \OutOfRangeException('未找到字段：'.$field);
+        if (!array_key_exists($field, $this->__fieldValue)) {
+            throw new \OutOfRangeException('未找到字段：' . $field);
         }
 
         return $this->__fieldValue[$field];
+    }
+
+
+    /**
+     * 对象形式添加数据的方法
+     */
+    public function add()
+    {
+        // load方法引入的不可以使用add
+        if ($this->__isLoad) {
+            throw new LoadEntityCouldNotAdd('不能够添加load函数生成的对象');
+        }
+
+        // 获取修改过的字段，并生成参数列表
+        $_self = $this;
+        $data = array_combine(
+            array_keys($this->__changedField), array_map(function ($key) use ($_self) {
+                return $_self->{$key};
+            }, array_keys($this->__changedField))
+        );
+
+        return self::insertExecute($data);
     }
 
 
@@ -180,7 +230,7 @@ abstract class TableEntity implements Loadable
 
         $priCnt = count($primaryKey);
         // 当主键只有一个，并且传递一个主键的时候
-        if($priCnt == 1 and is_scalar($idOrWhere)){
+        if ($priCnt == 1 and is_scalar($idOrWhere)) {
             $dataAdapter = static::select()
                 ->where([
                     $primaryKey[0] => $idOrWhere,
@@ -196,7 +246,7 @@ abstract class TableEntity implements Loadable
                 ->limit(1)
                 ->execute();
             return $dataAdapter->next(0);
-        }else{
+        } else {
             return false;
         }
     }
@@ -217,7 +267,7 @@ abstract class TableEntity implements Loadable
             ->where($where)
             ->execute();
 
-        if($info and isset($info[0])){
+        if ($info and isset($info[0])) {
             return $info[0]['cnt'];
         }
 
