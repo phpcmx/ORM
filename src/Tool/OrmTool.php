@@ -552,6 +552,7 @@ class OrmTool
                     "",
                     array_map(
                         function($field, $label)use($fieldMaxLen){
+                            if(empty($label)) $label = ucfirst($field);
                             return sprintf("            %-".($fieldMaxLen+2)."s => %s,\r\n", var_export($field, 1), var_export($label, 1));
                         },
                         array_keys($fieldLabel),
